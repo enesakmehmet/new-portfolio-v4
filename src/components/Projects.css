@@ -1,0 +1,160 @@
+.projects-section {
+  padding: 80px 0;
+  background-color: #f8fafc;
+}
+
+.projects-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.projects-container h2 {
+  font-size: 2.5rem;
+  color: #1a202c;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  padding: 20px;
+}
+
+.project-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.project-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+}
+
+.project-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .project-image img {
+  transform: scale(1.05);
+}
+
+.project-content {
+  padding: 20px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.project-content h3 {
+  font-size: 1.5rem;
+  color: #2d3748;
+  margin-bottom: 10px;
+}
+
+.project-content p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.project-technologies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.project-technologies span {
+  background-color: #edf2f7;
+  color: #4a5568;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.project-technologies span:hover {
+  background: #e2e8f0;
+}
+
+.project-links {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.project-links a {
+  text-decoration: none;
+  color: #4a5568;
+  font-weight: 600;
+  transition: color 0.3s ease;
+  padding: 10px 20px;
+  border-radius: 8px;
+  flex: 1;
+  text-align: center;
+}
+
+.project-links a:first-child {
+  background-color: #2d3748;
+  color: white;
+}
+
+.project-links a:last-child {
+  background-color: #4299e1;
+  color: white;
+}
+
+.project-links a:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  color: #2d3748;
+}
+
+/* Mobil cihazlar için responsive tasarım */
+@media (max-width: 768px) {
+  .projects-grid {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .project-image {
+    height: 200px;
+  }
+
+  .project-content {
+    padding: 20px;
+  }
+
+  .project-content h3 {
+    font-size: 1.3rem;
+  }
+}
+
+/* Tablet için responsive tasarım */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
