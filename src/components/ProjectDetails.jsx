@@ -1,22 +1,34 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import gameImg from '../assets/game.png';
 import waterImg from '../assets/water.png';
-import petsImg from '../assets/pets.png';
-import movieImg from '../assets/movie.png';
+import anaImg from '../assets/1.proje detay resim/ana.png'
+import gameImg from '../assets/1.proje detay resim/game.png'
+import game1Img from '../assets/1.proje detay resim/game1.png'
+import game2Img from '../assets/1.proje detay resim/game2.png'
+import anaopen from '../assets/2.proje detay resim/anaopen.png'
+import open2 from '../assets/2.proje detay resim/open2.png'
+import open3 from '../assets/2.proje detay resim/open3.png'
+import open4 from '../assets/2.proje detay resim/open4.png'
+import happy from '../assets/3.proje detay resim/happyana.png'
+import happy1 from '../assets/3.proje detay resim/happy1.png'
+import happy2 from '../assets/3.proje detay resim/happy2.png'
+import happy3 from '../assets/3.proje detay resim/happy3.png'
+import movie from '../assets/4.proje detay resim/movieana.png'
+import movie1 from '../assets/4.proje detay resim/movie1.png'
+import movie2 from '../assets/4.proje detay resim/movie2.png'
 
 // Proje verilerini içeri aktaralım
 const projects = [
   {
     id: 1,
     title: "E-Ticaret Oyun Key Satış Platformu",
-    mainImage: gameImg,
+    mainImage: anaImg,
     description: "Modern bir e-ticaret platformu. Kullanıcılar ürünleri görüntüleyebilir, sepete ekleyebilir ve satın alabilir. Admin paneli ile ürün yönetimi, sipariş takibi ve kullanıcı yönetimi yapılabilir.",
     gallery: [
       gameImg,
-      waterImg,
-      petsImg,
-      movieImg
+      game1Img,
+      game2Img,
+      
     ],
     technologies: ["JavaScript", "Node.js", "PostgreSQL", "Express.js"]
   },
@@ -26,36 +38,36 @@ const projects = [
     mainImage: waterImg,
     description: "OpenWeatherMap API'sini kullanarak anlık hava durumu, hava tahmini, hava kalitesi ve UV endeksi gibi bilgileri alıyor.",
     gallery: [
-      waterImg,
-      gameImg,
-      petsImg,
-      movieImg
+     anaopen,
+      open2,
+      open3,
+     open4
     ],
     technologies: ["React", "Tailwind CSS", "Prisma", "PostgreSQL"]
   },
   {
     id: 3,
     title: "Happy Pets",
-    mainImage: petsImg,
+    mainImage: happy,
     description: "Bu proje, Happy Pets isimli bir online pet shop platformunu içeren kapsamlı bir web sitesi geliştirmeyi amaçlamaktadır. Kullanıcılar, kedi, köpek ve diğer evcil hayvanlar için mama, oyuncak, aksesuar gibi ürünleri inceleyebilir, satın alabilir ve veteriner hizmetleri hakkında bilgi alabilirler.",
     gallery: [
-      petsImg,
-      gameImg,
-      waterImg,
-      movieImg
+      happy,
+      happy1,
+      happy2,
+      happy3
     ],
     technologies: ["React", "Socket.io", "Node.js", "MongoDB", "TypeScript"]
   },
   {
     id: 4,
     title: "Movie App",
-    mainImage: movieImg,
+    mainImage: movie,
     description: "Bu proje, Film Dünyası adında bir film keşfetme ve yönetme platformudur. Kullanıcılar, popüler ve klasik filmleri keşfedebilir, favorilerine ekleyebilir, izleme listesi oluşturabilir, film puanlayabilir ve yorum yapabilir.",
     gallery: [
-      movieImg,
-      gameImg,
-      waterImg,
-      petsImg
+      movie,
+      movie1,
+      movie2,
+      
     ],
     technologies: ["React", "NestJS", "PostgreSQL", "Docker", "JWT"]
   }
