@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import './Skills.css'
 import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaVuejs, FaGitAlt, FaNodeJs, FaSass, FaGithub } from 'react-icons/fa'
 import { SiTypescript, SiAdobexd, SiFigma, SiPostman, SiReacthookform, SiExpress, SiPassport, SiPostgresql, SiPrisma, SiNestjs } from 'react-icons/si'
@@ -7,6 +8,8 @@ import { BsBrushFill } from 'react-icons/bs'
 import { TbBrandReactNative } from 'react-icons/tb'
 
 const Skills = () => {
+  const [activeCategory, setActiveCategory] = useState("Frontend");
+
   const skills = [
     {
       category: "Frontend",
@@ -54,149 +57,204 @@ const Skills = () => {
     }
   ]
 
+  const getActiveSkillGroup = () => {
+    return skills.find(group => group.category === activeCategory);
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.3
+        staggerChildren: 0.1
       }
+    }
+  }
+
+  const skillBarVariants = {
+    hidden: { width: 0 },
+    visible: width => ({
+      width: `${width}%`,
+      transition: { duration: 1, ease: "easeOut" }
+    })
+  }
+
+  const tabVariants = {
+    inactive: { 
+      scale: 0.95, 
+      opacity: 0.7,
+      y: 0
+    },
+    active: { 
+      scale: 1, 
+      opacity: 1,
+      y: -10,
+      transition: { type: "spring", stiffness: 300, damping: 20 }
     }
   }
 
   const cardVariants = {
     hidden: { 
       opacity: 0,
-      y: 50
+      y: 20,
+      rotateX: 20
     },
     visible: { 
       opacity: 1,
       y: 0,
+      rotateX: 0,
       transition: {
         duration: 0.6,
-        staggerChildren: 0.1
+        ease: "easeOut"
       }
     }
   }
 
-  const skillItemVariants = {
-    hidden: { 
-      opacity: 0,
-      x: -20
-    },
+  const iconVariants = {
+    hidden: { scale: 0, rotate: -180 },
     visible: { 
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.4 }
+      scale: 1, 
+      rotate: 0,
+      transition: {
+        type: "spring",
+        stiffness: 260,
+        damping: 20
+      }
+    },
+    hover: { 
+      scale: 1.2,
+      rotate: 10,
+      transition: { 
+        duration: 0.3,
+        type: "spring",
+        stiffness: 300
+      }
     }
   }
 
   return (
-    <section id="skills" className="skills">
-      <motion.h2 
-        className="section-title"
-        initial={{ opacity: 0, y: -20 }}
+    <section id="skills" className="skills-section">
+      <motion.div 
+        className="skills-header"
+        initial={{ opacity: 0, y: -30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.6 }}
       >
-        Yeteneklerim
-      </motion.h2>
-      <motion.div 
-        className="skills-container"
-        variants={containerVariants}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
-        {skills.map((skillGroup, index) => (
-          <motion.div 
-            key={index} 
-            className="skill-card"
-            variants={cardVariants}
-            whileHover={{ scale: 1.02 }}
-            transition={{ duration: 0.3 }}
-          >
-            <motion.div 
-              className="skill-card-header"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+        <h2 className="skills-title">Yeteneklerim</h2>
+        <p className="skills-subtitle">Profesyonel olarak kullandığım teknolojiler ve araçlar</p>
+      </motion.div>
+
+      <div className="skills-tabs-container">
+        <motion.div 
+          className="skills-tabs"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ staggerChildren: 0.1, delayChildren: 0.3 }}
+        >
+          {skills.map((skillGroup, index) => (
+            <motion.div
+              key={index}
+              className={`skill-tab ${activeCategory === skillGroup.category ? 'active' : ''}`}
+              onClick={() => setActiveCategory(skillGroup.category)}
+              variants={tabVariants}
+              initial="inactive"
+              animate={activeCategory === skillGroup.category ? "active" : "inactive"}
+              whileHover={{ scale: 1.05 }}
             >
               <motion.div 
-                className="skill-card-icon"
-                whileHover={{ rotate: 360, scale: 1.1 }}
-                transition={{ duration: 0.6 }}
+                className="skill-tab-icon"
+                variants={iconVariants}
+                initial="hidden"
+                animate="visible"
+                whileHover="hover"
               >
                 {skillGroup.icon}
               </motion.div>
-              <h3 className="skill-card-title">{skillGroup.category}</h3>
-              <p className="skill-card-description">{skillGroup.description}</p>
+              <span>{skillGroup.category}</span>
             </motion.div>
-            <div className="skill-card-content">
-              {skillGroup.items.map((skill, skillIndex) => (
+          ))}
+        </motion.div>
+      </div>
+
+      <motion.div 
+        className="skills-content"
+        key={activeCategory}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div 
+          className="skills-category-info"
+          variants={cardVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <div className="category-icon-large">
+            {getActiveSkillGroup().icon}
+          </div>
+          <div className="category-details">
+            <h3>{getActiveSkillGroup().category}</h3>
+            <p>{getActiveSkillGroup().description}</p>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          className="skills-grid"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          {getActiveSkillGroup().items.map((skill, index) => (
+            <motion.div 
+              className="skill-item-card"
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.05, duration: 0.5 }}
+              whileHover={{ 
+                scale: 1.03, 
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.15)",
+                transition: { duration: 0.3 }
+              }}
+            >
+              <div className="skill-item-header">
                 <motion.div 
-                  key={skillIndex} 
-                  className="skill-item"
-                  variants={skillItemVariants}
-                  whileHover={{ scale: 1.05 }}
+                  className="skill-item-icon"
+                  variants={iconVariants}
+                  initial="hidden"
+                  animate="visible"
+                  whileHover="hover"
                 >
-                  <div className="skill-item-header">
-                    <motion.div 
-                      className="skill-icon-wrapper"
-                      whileHover={{ rotate: 360 }}
-                      transition={{ duration: 0.6 }}
-                    >
-                      {skill.icon}
-                    </motion.div>
-                    <span className="skill-name">{skill.name}</span>
-                  </div>
-                  <div className="skill-level">
-                    <motion.div 
-                      className="skill-circle-progress"
-                      initial={{ opacity: 0, scale: 0 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.5, delay: skillIndex * 0.1 }}
-                    >
-                      <svg viewBox="0 0 36 36">
-                        <path
-                          d="M18 2.0845
-                            a 15.9155 15.9155 0 0 1 0 31.831
-                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none"
-                          stroke="#eee"
-                          strokeWidth="3"
-                        />
-                        <motion.path
-                          d="M18 2.0845
-                            a 15.9155 15.9155 0 0 1 0 31.831
-                            a 15.9155 15.9155 0 0 1 0 -31.831"
-                          fill="none"
-                          stroke="var(--primary-color)"
-                          strokeWidth="3"
-                          initial={{ strokeDasharray: "0, 100" }}
-                          whileInView={{ strokeDasharray: `${skill.level}, 100` }}
-                          viewport={{ once: true }}
-                          transition={{ duration: 1, delay: skillIndex * 0.1 }}
-                        />
-                      </svg>
-                      <motion.span 
-                        className="skill-percentage"
-                        initial={{ opacity: 0 }}
-                        whileInView={{ opacity: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: skillIndex * 0.1 + 0.5 }}
-                      >
-                        {skill.level}%
-                      </motion.span>
-                    </motion.div>
-                  </div>
+                  {skill.icon}
                 </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        ))}
+                <h4 className="skill-item-name">{skill.name}</h4>
+              </div>
+              
+              <div className="skill-progress-container">
+                <div className="skill-level-label">
+                  <span>Uzmanlık</span>
+                  <span className="skill-percentage">{skill.level}%</span>
+                </div>
+                <div className="skill-progress-bar">
+                  <motion.div 
+                    className="skill-progress-fill"
+                    custom={skill.level}
+                    variants={skillBarVariants}
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true }}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
       </motion.div>
     </section>
   )

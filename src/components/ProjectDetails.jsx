@@ -17,7 +17,7 @@ import movie from '../assets/4.proje detay resim/movieana.png'
 import movie1 from '../assets/4.proje detay resim/movie1.png'
 import movie2 from '../assets/4.proje detay resim/movie2.png'
 
-// Proje verilerini içeri aktaralım
+// Proje verileri burada kalsın unutma!!! 
 const projects = [
   {
     id: 1,
