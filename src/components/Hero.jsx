@@ -57,6 +57,15 @@ const Hero = () => {
             İletişime Geç
           </motion.a>
           <motion.a 
+            href="/cv/Enes_CV.pdf" 
+            className="btn btn-outline"
+            download="Enes_CV.pdf"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            CV İndir
+          </motion.a>
+          <motion.a 
             href="#projects" 
             className="btn btn-secondary"
             whileHover={{ scale: 1.05 }}
