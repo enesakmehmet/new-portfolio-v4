@@ -1,5 +1,5 @@
 import { Suspense, lazy, useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import './App.css'
 import Navbar from './components/Navbar'

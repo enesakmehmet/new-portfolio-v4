@@ -1,64 +1,129 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './Skills.css'
 import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaVuejs, FaGitAlt, FaNodeJs, FaSass, FaGithub } from 'react-icons/fa'
 import { SiTypescript, SiAdobexd, SiFigma, SiPostman, SiReacthookform, SiExpress, SiPassport, SiPostgresql, SiPrisma, SiNestjs } from 'react-icons/si'
 import { MdDevices, MdStorage } from 'react-icons/md'
 import { BsBrushFill } from 'react-icons/bs'
 import { TbBrandReactNative } from 'react-icons/tb'
+import React from 'react'
 
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState("Frontend");
+  const [skills, setSkills] = useState([]);
 
-  const skills = [
-    {
-      category: "Frontend",
-      icon: <FaReact className="category-icon" />,
-      description: "Modern web teknolojileri ile kullanıcı deneyimi odaklı geliştirme",
-      items: [
-        { name: "HTML5", level: 90, icon: <FaHtml5 /> },
-        { name: "CSS3", level: 85, icon: <FaCss3Alt /> },
-        { name: "JavaScript", level: 85, icon: <FaJs /> },
-        { name: "React", level: 80, icon: <FaReact /> },
-        { name: "React Native", level: 75, icon: <TbBrandReactNative /> },
-        { name: "Vue.js", level: 75, icon: <FaVuejs /> },
-        { name: "Sass", level: 80, icon: <FaSass /> },
-        { name: "Figma", level: 85, icon: <SiFigma /> },
-        { name: "GitHub", level: 85, icon: <FaGithub /> },
-        { name: "Postman", level: 75, icon: <SiPostman /> },
-        { name: "Zustand", level: 75, icon: <MdStorage /> },
-        { name: "React Hook Form", level: 80, icon: <SiReacthookform /> }
-      ]
-    },
-    {
-      category: "UI/UX Tasarım",
-      icon: <BsBrushFill className="category-icon" />,
-      description: "Kullanıcı odaklı arayüz tasarımı ve deneyim optimizasyonu",
-      items: [
-        { name: "Figma", level: 85, icon: <SiFigma /> },
-        { name: "Adobe XD", level: 80, icon: <SiAdobexd /> },
-        { name: "Responsive Tasarım", level: 90, icon: <MdDevices /> },
-        { name: "UI Prensipleri", level: 85, icon: <BsBrushFill /> }
-      ]
-    },
-    {
-      category: "Backend",
-      icon: <FaNodeJs className="category-icon" />,
-      description: "Sunucu tarafı teknolojileri ve veritabanı yönetimi",
-      items: [
-        { name: "Node.js", level: 80, icon: <FaNodeJs /> },
-        { name: "TypeScript", level: 75, icon: <SiTypescript /> },
-        { name: "Express.js", level: 75, icon: <SiExpress /> },
-        { name: "Passport.js", level: 70, icon: <SiPassport /> },
-        { name: "PostgreSQL", level: 75, icon: <SiPostgresql /> },
-        { name: "Prisma ORM", level: 70, icon: <SiPrisma /> },
-        { name: "NestJS", level: 70, icon: <SiNestjs /> }
-      ]
+  
+  const getIconComponent = (iconName) => {
+    switch (iconName) {
+      case 'FaHtml5': return <FaHtml5 />;
+      case 'FaCss3Alt': return <FaCss3Alt />;
+      case 'FaJs': return <FaJs />;
+      case 'FaReact': return <FaReact />;
+      case 'FaVuejs': return <FaVuejs />;
+      case 'FaGitAlt': return <FaGitAlt />;
+      case 'FaNodeJs': return <FaNodeJs />;
+      case 'FaSass': return <FaSass />;
+      case 'FaGithub': return <FaGithub />;
+      case 'SiTypescript': return <SiTypescript />;
+      case 'SiAdobexd': return <SiAdobexd />;
+      case 'SiFigma': return <SiFigma />;
+      case 'SiPostman': return <SiPostman />;
+      case 'SiReacthookform': return <SiReacthookform />;
+      case 'SiExpress': return <SiExpress />;
+      case 'SiPassport': return <SiPassport />;
+      case 'SiPostgresql': return <SiPostgresql />;
+      case 'SiPrisma': return <SiPrisma />;
+      case 'SiNestjs': return <SiNestjs />;
+      case 'MdDevices': return <MdDevices />;
+      case 'MdStorage': return <MdStorage />;
+      case 'BsBrushFill': return <BsBrushFill />;
+      case 'TbBrandReactNative': return <TbBrandReactNative />;
+      default: return <FaReact />;
     }
-  ]
+  };
+
+  
+  const getCategoryIcon = (iconName) => {
+    const icon = getIconComponent(iconName);
+    return React.cloneElement(icon, { className: "category-icon" });
+  };
+
+  
+  useEffect(() => {
+    const savedSkills = localStorage.getItem('skillCategories');
+    if (savedSkills) {
+      const parsedSkills = JSON.parse(savedSkills);
+      
+      
+      const transformedSkills = parsedSkills.map(category => ({
+        ...category,
+        icon: getCategoryIcon(category.icon),
+        items: category.items.map(item => ({
+          ...item,
+          icon: getIconComponent(item.icon)
+        }))
+      }));
+      
+      setSkills(transformedSkills);
+      
+      
+      if (transformedSkills.length > 0 && !transformedSkills.find(cat => cat.category === activeCategory)) {
+        setActiveCategory(transformedSkills[0].category);
+      }
+    } else {
+      
+      const defaultSkills = [
+        {
+          category: "Frontend",
+          icon: <FaReact className="category-icon" />,
+          description: "Modern web teknolojileri ile kullanıcı deneyimi odaklı geliştirme",
+          items: [
+            { name: "HTML5", level: 90, icon: <FaHtml5 /> },
+            { name: "CSS3", level: 85, icon: <FaCss3Alt /> },
+            { name: "JavaScript", level: 85, icon: <FaJs /> },
+            { name: "React", level: 80, icon: <FaReact /> },
+            { name: "React Native", level: 75, icon: <TbBrandReactNative /> },
+            { name: "Vue.js", level: 75, icon: <FaVuejs /> },
+            { name: "Sass", level: 80, icon: <FaSass /> },
+            { name: "Figma", level: 85, icon: <SiFigma /> },
+            { name: "GitHub", level: 85, icon: <FaGithub /> },
+            { name: "Postman", level: 75, icon: <SiPostman /> },
+            { name: "Zustand", level: 75, icon: <MdStorage /> },
+            { name: "React Hook Form", level: 80, icon: <SiReacthookform /> }
+          ]
+        },
+        {
+          category: "UI/UX Tasarım",
+          icon: <BsBrushFill className="category-icon" />,
+          description: "Kullanıcı odaklı arayüz tasarımı ve deneyim optimizasyonu",
+          items: [
+            { name: "Figma", level: 85, icon: <SiFigma /> },
+            { name: "Adobe XD", level: 80, icon: <SiAdobexd /> },
+            { name: "Responsive Tasarım", level: 90, icon: <MdDevices /> },
+            { name: "UI Prensipleri", level: 85, icon: <BsBrushFill /> }
+          ]
+        },
+        {
+          category: "Backend",
+          icon: <FaNodeJs className="category-icon" />,
+          description: "Sunucu tarafı teknolojileri ve veritabanı yönetimi",
+          items: [
+            { name: "Node.js", level: 80, icon: <FaNodeJs /> },
+            { name: "TypeScript", level: 75, icon: <SiTypescript /> },
+            { name: "Express.js", level: 75, icon: <SiExpress /> },
+            { name: "Passport.js", level: 70, icon: <SiPassport /> },
+            { name: "PostgreSQL", level: 75, icon: <SiPostgresql /> },
+            { name: "Prisma ORM", level: 70, icon: <SiPrisma /> },
+            { name: "NestJS", level: 70, icon: <SiNestjs /> }
+          ]
+        }
+      ];
+      setSkills(defaultSkills);
+    }
+  }, [activeCategory]);
 
   const getActiveSkillGroup = () => {
-    return skills.find(group => group.category === activeCategory);
+    return skills.find(group => group.category === activeCategory) || { items: [] };
   }
 
   const containerVariants = {

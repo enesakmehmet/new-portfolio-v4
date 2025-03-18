@@ -18,6 +18,7 @@ const Navbar = () => {
           <Link to="/projects" className="nav-link">Projeler</Link>
           <Link to="/skills" className="nav-link">Yetenekler</Link>
           <Link to="/contact" className="nav-link">İletişim</Link>
+          <Link to="/admin" className="admin-button">Admin</Link>
         </div>
 
         <div 

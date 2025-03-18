@@ -87,7 +87,7 @@ const Hero = () => {
           transition={{ duration: 0.3 }}
         >
           <motion.img 
-            src='/src/assets/images/1740750293644.jpeg' 
+            src='/images/profile-photo.jpeg' 
             alt="Enes'in profil fotoğrafı"
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}

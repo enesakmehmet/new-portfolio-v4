@@ -14,7 +14,7 @@ import {
 import { Delete as DeleteIcon, Mail as MailIcon } from '@mui/icons-material';
 
 const MessageManager = () => {
-  const [messages] = useState([
+  const [messages, setMessages] = useState([
     {
       id: 1,
       name: 'Ahmet Yılmaz',
@@ -39,6 +39,7 @@ const MessageManager = () => {
   ]);
 
   const handleDelete = (id) => {
+    setMessages(messages.filter(message => message.id !== id));
     console.log('Mesaj silindi:', id);
   };
 
@@ -50,44 +51,52 @@ const MessageManager = () => {
 
       <Paper elevation={2}>
         <List>
-          {messages.map((message, index) => (
-            <Box key={message.id}>
-              <ListItem
-                secondaryAction={
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(message.id)}>
-                    <DeleteIcon color="error" />
-                  </IconButton>
-                }
-              >
-                <ListItemAvatar>
-                  <Avatar>
-                    <MailIcon />
-                  </Avatar>
-                </ListItemAvatar>
-                <ListItemText
-                  primary={
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Typography variant="subtitle1">{message.name}</Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {message.date}
-                      </Typography>
-                    </Box>
+          {messages.length > 0 ? (
+            messages.map((message, index) => (
+              <Box key={message.id}>
+                <ListItem
+                  secondaryAction={
+                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(message.id)}>
+                      <DeleteIcon color="error" />
+                    </IconButton>
                   }
-                  secondary={
-                    <>
-                      <Typography component="span" variant="body2" color="text.primary">
-                        {message.email}
-                      </Typography>
-                      <Typography component="p" variant="body2">
-                        {message.message}
-                      </Typography>
-                    </>
-                  }
-                />
-              </ListItem>
-              {index < messages.length - 1 && <Divider variant="inset" component="li" />}
-            </Box>
-          ))}
+                >
+                  <ListItemAvatar>
+                    <Avatar>
+                      <MailIcon />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="subtitle1">{message.name}</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {message.date}
+                        </Typography>
+                      </Box>
+                    }
+                    secondary={
+                      <>
+                        <Typography component="span" variant="body2" color="text.primary">
+                          {message.email}
+                        </Typography>
+                        <Typography component="p" variant="body2">
+                          {message.message}
+                        </Typography>
+                      </>
+                    }
+                  />
+                </ListItem>
+                {index < messages.length - 1 && <Divider variant="inset" component="li" />}
+              </Box>
+            ))
+          ) : (
+            <ListItem>
+              <ListItemText 
+                primary={<Typography variant="subtitle1" align="center">Hiç mesaj bulunamadı</Typography>} 
+              />
+            </ListItem>
+          )}
         </List>
       </Paper>
     </Box>

@@ -67,6 +67,23 @@
   width: 80%;
 }
 
+.admin-button {
+  color: white;
+  background-color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
+}
+
+.admin-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
 .hamburger {
   display: none;
   cursor: pointer;
@@ -143,6 +160,14 @@
 
   .nav-link:hover {
     transform: translateY(-2px);
+  }
+  
+  .admin-button {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    display: block;
+    width: 80%;
+    margin: 1.5rem auto 0.5rem;
   }
 }
 

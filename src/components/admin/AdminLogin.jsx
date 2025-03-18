@@ -12,12 +12,12 @@ const AdminLogin = ({ setIsAuthenticated }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Bu örnek için basit bir doğrulama
+      
       if (username === 'admin' && password === 'admin123') {
         localStorage.setItem('userToken', 'dummy-token');
         localStorage.setItem('isAdmin', 'true');
         setIsAuthenticated(true);
-        navigate('/admin/projects'); // Doğrudan projelere yönlendir
+        navigate('/admin/projects'); 
       } else {
         setError('Kullanıcı adı veya şifre hatalı');
       }
