@@ -1,9 +1,14 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { resolve } from 'path'
+import { fileURLToPath } from 'url'
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url))
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/new-portfolio-v4/',
   plugins: [
     react(),
     VitePWA({
@@ -74,6 +79,9 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+      },
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
@@ -96,5 +104,10 @@ export default defineConfig({
     open: true,
     cors: true,
     host: true
+  },
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src')
+    }
   }
 })
