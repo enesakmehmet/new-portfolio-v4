@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, IconButton } from '@mui/material';
-import { Menu as MenuIcon, Dashboard as DashboardIcon, Work as WorkIcon, Mail as MailIcon, Logout as LogoutIcon, Code as CodeIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, Dashboard as DashboardIcon, Work as WorkIcon, Mail as MailIcon, Logout as LogoutIcon, Code as CodeIcon, Palette as PaletteIcon } from '@mui/icons-material';
 import { useNavigate, Routes, Route, Navigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ProjectManager from './ProjectManager';
 import MessageManager from './MessageManager';
 import DashboardHome from './DashboardHome';
 import SkillManager from './SkillManager';
+import ThemeManager from './ThemeManager';
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -28,6 +29,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     { text: 'Projeler', icon: <WorkIcon />, path: '/admin/projects' },
     { text: 'Yetenekler', icon: <CodeIcon />, path: '/admin/skills' },
     { text: 'Mesajlar', icon: <MailIcon />, path: '/admin/messages' },
+    { text: 'Tema Ayarları', icon: <PaletteIcon />, path: '/admin/theme' },
   ];
 
   const drawer = (
@@ -111,6 +113,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
           <Route path="/projects" element={<ProjectManager />} />
           <Route path="/skills" element={<SkillManager />} />
           <Route path="/messages" element={<MessageManager />} />
+          <Route path="/theme" element={<ThemeManager />} />
           <Route path="*" element={<Navigate to="/admin/projects" replace />} />
         </Routes>
       </Box>
