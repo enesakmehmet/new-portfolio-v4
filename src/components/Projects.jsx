@@ -61,19 +61,57 @@ const Projects = () => {
 
   useEffect(() => {
     const fetchProjects = async () => {
+      setLoading(true);
       try {
-        const response = await axios.get(`${API_URL}/api/projects`);
-        if (response.data && response.data.length > 0) {
-          setProjects(response.data);
-        } else {
-          // If no projects from API, use fallback data
-          setProjects(fallbackProjects);
+        let projectsData = [];
+        
+        // Try to fetch from API first
+        if (API_URL) {
+          try {
+            const response = await axios.get(`${API_URL}/api/projects`);
+            if (response.data) {
+              projectsData = response.data;
+            }
+          } catch (apiError) {
+            console.log('API fetch failed, using localStorage:', apiError.message);
+          }
         }
+        
+        // Get projects from localStorage
+        const localProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+        
+        // Combine API and localStorage projects, giving priority to localStorage versions
+        // Create a map to track projects by ID to avoid duplicates
+        const projectMap = new Map();
+        
+        // First add API projects to the map
+        projectsData.forEach(project => {
+          const projectId = project._id || project.id;
+          projectMap.set(projectId.toString(), project);
+        });
+        
+        // Then override with localStorage projects (these are more up-to-date)
+        localProjects.forEach(project => {
+          const projectId = project._id || project.id;
+          projectMap.set(projectId.toString(), project);
+        });
+        
+        // Convert map back to array
+        const combinedProjects = Array.from(projectMap.values());
+        
+        // If no projects found, use fallback data
+        if (combinedProjects.length === 0) {
+          setProjects(fallbackProjects);
+        } else {
+          setProjects(combinedProjects);
+        }
+        
         setError(null);
       } catch (err) {
         console.error('Error fetching projects:', err);
+        setError('Projeler yüklenirken bir hata oluştu');
+        // Use fallback data on error
         setProjects(fallbackProjects);
-        setError('Failed to fetch projects from server. Showing sample projects instead.');
       } finally {
         setLoading(false);
       }
@@ -87,15 +125,29 @@ const Projects = () => {
   };
 
   const getProjectImage = (project) => {
-    // If project has an imageUrl from the API
+    // If project has imageUrl, use it
     if (project.imageUrl) {
-      return project.imageUrl.startsWith('http') 
-        ? project.imageUrl 
-        : `${API_URL}${project.imageUrl}`;
+      // Check if it's a blob URL (created by URL.createObjectURL)
+      if (project.imageUrl.startsWith('blob:')) {
+        return project.imageUrl;
+      }
+      
+      // Check if it's a full URL (starts with http)
+      if (project.imageUrl.startsWith('http')) {
+        return project.imageUrl;
+      }
+      
+      // Otherwise, it's a relative path from the API
+      return `${API_URL}${project.imageUrl}`;
     }
     
+    // If project has image property (from fallback), use it
+    if (project.image) {
+      return project.image;
+    }
     
-    return fallbackImages[project._id] || fallbackImages[1];
+    // Otherwise use fallback image based on id
+    return fallbackImages[project._id] || fallbackImages[project.id] || fallbackImages[1];
   };
 
   if (loading) {
@@ -122,7 +174,14 @@ const Projects = () => {
           {projects.map((project) => (
             <div key={project._id || project.id} className="project-card">
               <div className="project-image">
-                <img src={project.image || getProjectImage(project)} alt={project.title} />
+                <img 
+                  src={getProjectImage(project)} 
+                  alt={project.title} 
+                  onError={(e) => {
+                    console.error('Image failed to load:', e.target.src);
+                    e.target.src = fallbackImages[1]; // Use a default fallback image
+                  }}
+                />
               </div>
               <div className="project-content">
                 <h3>{project.title}</h3>

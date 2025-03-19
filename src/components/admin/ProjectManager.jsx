@@ -24,14 +24,13 @@ import {
   Snackbar,
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Image as ImageIcon } from '@mui/icons-material';
+import axios from 'axios';
 
-// Import the same fallback images used in Projects.jsx
 import gameImg from '../../assets/game.png';
 import waterImg from '../../assets/water.png';
 import petsImg from '../../assets/pets.png';
 import movieImg from '../../assets/movie.png';
 
-// Hardcoded projects data - same as in Projects.jsx
 const initialProjects = [
   {
     id: 1,
@@ -67,9 +66,11 @@ const initialProjects = [
   }
 ];
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 const ProjectManager = () => {
   const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
@@ -91,54 +92,147 @@ const ProjectManager = () => {
   const [techInput, setTechInput] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // Initialize with hardcoded projects on component mount
+  // Fetch projects from API on component mount
   useEffect(() => {
-    // Use the hardcoded projects instead of fetching from API
-    setProjects(initialProjects);
-    setLoading(false);
-    setError(null);
+    const fetchProjects = async () => {
+      setLoading(true);
+      try {
+        // Try to fetch from API first
+        const response = await axios.get(`${API_URL}/api/projects`);
+        if (response.data && response.data.length > 0) {
+          setProjects(response.data);
+        } else {
+          // Fallback to initial projects if API returns empty
+          setProjects(initialProjects);
+        }
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching projects:', err);
+        // Fallback to initial projects if API request fails
+        setProjects(initialProjects);
+        setError('Projeler yüklenirken bir hata oluştu. Örnek projeler gösteriliyor.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setLoading(true);
     try {
+      // Create a new project object with all the data
+      const projectData = {
+        title: newProject.title,
+        description: newProject.description,
+        technologies: newProject.technologies,
+        liveUrl: newProject.liveUrl || '',
+        githubUrl: newProject.githubUrl || '',
+      };
+      
+      // Handle image separately to ensure proper storage
+      if (selectedFile) {
+        // Create a blob URL for the image that can be displayed
+        const imageUrl = URL.createObjectURL(selectedFile);
+        projectData.imageUrl = imageUrl;
+        
+        // Also store the file for potential API upload
+        projectData.imageFile = selectedFile;
+      } else if (editingProject?.imageUrl) {
+        projectData.imageUrl = editingProject.imageUrl;
+      } else if (editingProject?.image) {
+        projectData.image = editingProject.image;
+      }
+      
+      // Simulate API response with local data
+      let updatedProject;
+      
       if (editingProject) {
-        // Update existing project in the local state
+        // Update existing project
+        updatedProject = {
+          ...editingProject,
+          ...projectData,
+          _id: editingProject._id || editingProject.id
+        };
+        
+        // Update local state with the updated project
         const updatedProjects = projects.map(project => 
-          (project.id === editingProject.id || project._id === editingProject._id) 
-            ? {
-                ...project,
-                title: newProject.title,
-                description: newProject.description,
-                technologies: newProject.technologies,
-                liveUrl: newProject.liveUrl,
-                githubUrl: newProject.githubUrl || newProject.githubLink,
-                // Keep existing image if no new file is selected
-                image: selectedFile ? URL.createObjectURL(selectedFile) : (project.image || project.imageUrl)
-              }
+          (project._id === updatedProject._id || project.id === updatedProject._id) 
+            ? updatedProject 
             : project
         );
-        
         setProjects(updatedProjects);
+        
+        // Save to localStorage
+        saveProjectsToLocalStorage(updatedProjects);
+        
+        // Try to update on server if available
+        try {
+          // Create FormData for file upload
+          const formData = new FormData();
+          formData.append('title', newProject.title);
+          formData.append('description', newProject.description);
+          formData.append('technologies', JSON.stringify(newProject.technologies));
+          formData.append('liveUrl', newProject.liveUrl || '');
+          formData.append('githubUrl', newProject.githubUrl || '');
+          
+          if (selectedFile) {
+            formData.append('image', selectedFile);
+          }
+          
+          // Try to update on server but don't wait for response
+          axios.put(
+            `${API_URL}/api/projects/${editingProject._id || editingProject.id}`, 
+            formData
+          ).catch(error => console.log('Server update failed, but local update succeeded:', error.message));
+        } catch {
+          console.log('Server update failed, but local update succeeded');
+        }
+        
         setSnackbar({
           open: true,
           message: 'Proje başarıyla güncellendi',
           severity: 'success'
         });
       } else {
-        // Create new project in the local state
-        const newId = Math.max(...projects.map(p => p.id || p._id || 0)) + 1;
-        const projectToAdd = {
+        // Create new project
+        const newId = Math.max(...projects.map(p => p._id || p.id || 0)) + 1;
+        updatedProject = {
+          ...projectData,
+          _id: newId,
           id: newId,
-          title: newProject.title,
-          description: newProject.description,
-          technologies: newProject.technologies,
-          liveUrl: newProject.liveUrl,
-          githubLink: newProject.githubUrl,
-          image: selectedFile ? URL.createObjectURL(selectedFile) : null
+          createdAt: new Date().toISOString()
         };
         
-        setProjects([...projects, projectToAdd]);
+        // Add new project to local state
+        const updatedProjects = [...projects, updatedProject];
+        setProjects(updatedProjects);
+        
+        // Save to localStorage
+        saveProjectsToLocalStorage(updatedProjects);
+        
+        // Try to create on server if available
+        try {
+          // Create FormData for file upload
+          const formData = new FormData();
+          formData.append('title', newProject.title);
+          formData.append('description', newProject.description);
+          formData.append('technologies', JSON.stringify(newProject.technologies));
+          formData.append('liveUrl', newProject.liveUrl || '');
+          formData.append('githubUrl', newProject.githubUrl || '');
+          
+          if (selectedFile) {
+            formData.append('image', selectedFile);
+          }
+          
+          // Try to create on server but don't wait for response
+          axios.post(`${API_URL}/api/projects`, formData)
+            .catch(error => console.log('Server create failed, but local create succeeded:', error.message));
+        } catch {
+          console.log('Server create failed, but local create succeeded');
+        }
+        
         setSnackbar({
           open: true,
           message: 'Yeni proje başarıyla oluşturuldu',
@@ -171,7 +265,9 @@ const ProjectManager = () => {
     
     // Handle image preview from different sources
     if (project.imageUrl) {
-      setImagePreview(project.imageUrl);
+      setImagePreview(project.imageUrl.startsWith('http') 
+        ? project.imageUrl 
+        : `${API_URL}${project.imageUrl}`);
     } else if (project.image) {
       setImagePreview(project.image);
     } else {
@@ -181,7 +277,7 @@ const ProjectManager = () => {
     setOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!window.confirm('Bu projeyi silmek istediğinize emin misiniz?')) {
       return;
     }
@@ -189,11 +285,22 @@ const ProjectManager = () => {
     setLoading(true);
     try {
       // Remove project from local state
-      const filteredProjects = projects.filter(project => 
-        project.id !== id && project._id !== id
+      const updatedProjects = projects.filter(project => 
+        project._id !== id && project.id !== id
       );
+      setProjects(updatedProjects);
       
-      setProjects(filteredProjects);
+      // Save to localStorage
+      saveProjectsToLocalStorage(updatedProjects);
+      
+      // Try to delete on server if available
+      try {
+        axios.delete(`${API_URL}/api/projects/${id}`)
+          .catch(error => console.log('Server delete failed, but local delete succeeded:', error.message));
+      } catch {
+        console.log('Server delete failed, but local delete succeeded');
+      }
+      
       setSnackbar({
         open: true,
         message: 'Proje başarıyla silindi',
@@ -244,12 +351,21 @@ const ProjectManager = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      // Store the selected file
       setSelectedFile(file);
+      
+      // Create a preview URL for the image
       const fileReader = new FileReader();
       fileReader.onload = () => {
         setImagePreview(fileReader.result);
       };
       fileReader.readAsDataURL(file);
+      
+      // Update the form data
+      setNewProject({
+        ...newProject,
+        // We don't set imageUrl here as it will be handled during save
+      });
     }
   };
 
@@ -279,6 +395,14 @@ const ProjectManager = () => {
 
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
+  };
+
+  const saveProjectsToLocalStorage = (updatedProjects) => {
+    try {
+      localStorage.setItem('projects', JSON.stringify(updatedProjects));
+    } catch (error) {
+      console.error('Error saving projects to localStorage:', error);
+    }
   };
 
   if (loading && !open) {
@@ -335,9 +459,11 @@ const ProjectManager = () => {
                     {(project.imageUrl || project.image) ? (
                       <Box
                         component="img"
-                        src={(project.imageUrl || project.image).startsWith('http') 
-                          ? (project.imageUrl || project.image) 
-                          : `${project.imageUrl || project.image}`}
+                        src={project.imageUrl ? 
+                          (project.imageUrl.startsWith('http') 
+                            ? project.imageUrl 
+                            : `${API_URL}${project.imageUrl}`)
+                          : project.image}
                         alt={project.title}
                         sx={{ width: 80, height: 50, objectFit: 'cover', borderRadius: 1 }}
                       />
