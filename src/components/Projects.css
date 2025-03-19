@@ -18,9 +18,10 @@
 
 .projects-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 30px;
   padding: 20px;
+  width: 100%;
 }
 
 .project-card {
@@ -156,5 +157,14 @@
 @media (min-width: 769px) and (max-width: 1024px) {
   .projects-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Geniş ekranlar için responsive tasarım */
+@media (min-width: 1025px) {
+  .projects-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 1200px;
+    margin: 0 auto;
   }
 }
