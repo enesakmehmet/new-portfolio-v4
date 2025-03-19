@@ -7,7 +7,7 @@ import waterImg from '../assets/water.png';
 import petsImg from '../assets/pets.png';
 import movieImg from '../assets/movie.png';
 
-// Fallback projects data in case API fails
+
 const fallbackProjects = [
   {
     id: 1,
@@ -43,7 +43,7 @@ const fallbackProjects = [
   }
 ];
 
-// Map of fallback images to use if a project doesn't have an image URL
+
 const fallbackImages = {
   1: gameImg,
   2: waterImg,
@@ -94,7 +94,7 @@ const Projects = () => {
         : `${API_URL}${project.imageUrl}`;
     }
     
-    // Otherwise use fallback image based on index or default to first fallback
+    
     return fallbackImages[project._id] || fallbackImages[1];
   };
 

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import {
   Box,
   Typography,
@@ -26,7 +25,47 @@ import {
 } from '@mui/material';
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon, Image as ImageIcon } from '@mui/icons-material';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+// Import the same fallback images used in Projects.jsx
+import gameImg from '../../assets/game.png';
+import waterImg from '../../assets/water.png';
+import petsImg from '../../assets/pets.png';
+import movieImg from '../../assets/movie.png';
+
+// Hardcoded projects data - same as in Projects.jsx
+const initialProjects = [
+  {
+    id: 1,
+    title: "E-Ticaret Oyun Key Satış Platformu",
+    description: "Modern bir e-ticaret platformu. Kullanıcılar ürünleri görüntüleyebilir, sepete ekleyebilir ve satın alabilir. Admin paneli ile ürün yönetimi, sipariş takibi ve kullanıcı yönetimi yapılabilir.",
+    technologies: ["JavaScript", "Node.js", "PostgreSQL", "Express.js"],
+    image: gameImg,
+    githubLink: "https://github.com/enesakmehmet/game-web-v3"
+  },
+  {
+    id: 2,
+    title: "OpenWeatherMap",
+    description: "OpenWeatherMap API'sini kullanarak anlık hava durumu, hava tahmini, hava kalitesi ve UV endeksi gibi bilgileri alıyor.",
+    technologies: ["React", "Tailwind CSS", "Prisma", "PostgreSQL"],
+    image: waterImg,
+    githubLink: "https://github.com/"
+  },
+  {
+    id: 3,
+    title: "Happy Pets",
+    description: "Bu proje, Happy Pets isimli bir online pet shop platformunu içeren kapsamlı bir web sitesi geliştirmeyi amaçlamaktadır.",
+    technologies: ["React", "Socket.io", "Node.js", "MongoDB"],
+    image: petsImg,
+    githubLink: "https://github.com/"
+  },
+  {
+    id: 4,
+    title: "Movie App",
+    description: "Bu proje, Film Dünyası adında bir film keşfetme ve yönetme platformudur.",
+    technologies: ["React", "NestJS", "PostgreSQL", "Docker"],
+    image: movieImg,
+    githubLink: "https://github.com/"
+  }
+];
 
 const ProjectManager = () => {
   const [projects, setProjects] = useState([]);
@@ -52,75 +91,54 @@ const ProjectManager = () => {
   const [techInput, setTechInput] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // Fetch projects on component mount
+  // Initialize with hardcoded projects on component mount
   useEffect(() => {
-    fetchProjects();
+    // Use the hardcoded projects instead of fetching from API
+    setProjects(initialProjects);
+    setLoading(false);
+    setError(null);
   }, []);
 
-  const fetchProjects = async () => {
+  const handleSave = () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/api/projects`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setProjects(response.data);
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch projects. Please try again.');
-      console.error('Error fetching projects:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      const token = localStorage.getItem('token');
-      const formData = new FormData();
-      
-      // Add text fields to formData
-      formData.append('title', newProject.title);
-      formData.append('description', newProject.description);
-      formData.append('technologies', JSON.stringify(newProject.technologies));
-      formData.append('liveUrl', newProject.liveUrl || '');
-      formData.append('githubUrl', newProject.githubUrl || '');
-      
-      // Add image file if selected
-      if (selectedFile) {
-        formData.append('image', selectedFile);
-      }
-      
       if (editingProject) {
-        // Update existing project
-        await axios.put(
-          `${API_URL}/api/projects/${editingProject._id}`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            }
-          }
+        // Update existing project in the local state
+        const updatedProjects = projects.map(project => 
+          (project.id === editingProject.id || project._id === editingProject._id) 
+            ? {
+                ...project,
+                title: newProject.title,
+                description: newProject.description,
+                technologies: newProject.technologies,
+                liveUrl: newProject.liveUrl,
+                githubUrl: newProject.githubUrl || newProject.githubLink,
+                // Keep existing image if no new file is selected
+                image: selectedFile ? URL.createObjectURL(selectedFile) : (project.image || project.imageUrl)
+              }
+            : project
         );
+        
+        setProjects(updatedProjects);
         setSnackbar({
           open: true,
           message: 'Proje başarıyla güncellendi',
           severity: 'success'
         });
       } else {
-        // Create new project
-        await axios.post(
-          `${API_URL}/api/projects`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+        // Create new project in the local state
+        const newId = Math.max(...projects.map(p => p.id || p._id || 0)) + 1;
+        const projectToAdd = {
+          id: newId,
+          title: newProject.title,
+          description: newProject.description,
+          technologies: newProject.technologies,
+          liveUrl: newProject.liveUrl,
+          githubLink: newProject.githubUrl,
+          image: selectedFile ? URL.createObjectURL(selectedFile) : null
+        };
+        
+        setProjects([...projects, projectToAdd]);
         setSnackbar({
           open: true,
           message: 'Yeni proje başarıyla oluşturuldu',
@@ -128,14 +146,12 @@ const ProjectManager = () => {
         });
       }
       
-      // Refresh projects list
-      fetchProjects();
       handleClose();
     } catch (err) {
       console.error('Error saving project:', err);
       setSnackbar({
         open: true,
-        message: err.response?.data?.message || 'Proje kaydedilirken bir hata oluştu',
+        message: 'Proje kaydedilirken bir hata oluştu',
         severity: 'error'
       });
     } finally {
@@ -150,26 +166,34 @@ const ProjectManager = () => {
       description: project.description,
       technologies: project.technologies || [],
       liveUrl: project.liveUrl || '',
-      githubUrl: project.githubUrl || '',
+      githubUrl: project.githubUrl || project.githubLink || '',
     });
-    setImagePreview(project.imageUrl);
+    
+    // Handle image preview from different sources
+    if (project.imageUrl) {
+      setImagePreview(project.imageUrl);
+    } else if (project.image) {
+      setImagePreview(project.image);
+    } else {
+      setImagePreview('');
+    }
+    
     setOpen(true);
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (!window.confirm('Bu projeyi silmek istediğinize emin misiniz?')) {
       return;
     }
     
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`${API_URL}/api/projects/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      // Remove project from local state
+      const filteredProjects = projects.filter(project => 
+        project.id !== id && project._id !== id
+      );
       
-      // Refresh projects list
-      fetchProjects();
+      setProjects(filteredProjects);
       setSnackbar({
         open: true,
         message: 'Proje başarıyla silindi',
@@ -306,12 +330,14 @@ const ProjectManager = () => {
               </TableRow>
             ) : (
               projects.map((project) => (
-                <TableRow key={project._id}>
+                <TableRow key={project._id || project.id}>
                   <TableCell>
-                    {project.imageUrl ? (
+                    {(project.imageUrl || project.image) ? (
                       <Box
                         component="img"
-                        src={project.imageUrl.startsWith('http') ? project.imageUrl : `${API_URL}${project.imageUrl}`}
+                        src={(project.imageUrl || project.image).startsWith('http') 
+                          ? (project.imageUrl || project.image) 
+                          : `${project.imageUrl || project.image}`}
                         alt={project.title}
                         sx={{ width: 80, height: 50, objectFit: 'cover', borderRadius: 1 }}
                       />
@@ -327,21 +353,21 @@ const ProjectManager = () => {
                   </TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1} flexWrap="wrap">
-                      {project.technologies?.slice(0, 3).map((tech, index) => (
+                      {(project.technologies || [])?.slice(0, 3).map((tech, index) => (
                         <Chip
                           key={index}
                           label={tech}
                           size="small"
                         />
                       ))}
-                      {project.technologies?.length > 3 && (
+                      {(project.technologies || [])?.length > 3 && (
                         <Chip label={`+${project.technologies.length - 3}`} size="small" variant="outlined" />
                       )}
                     </Stack>
                   </TableCell>
                   <TableCell>
                     <Stack direction="row" spacing={1}>
-                      {project.liveUrl && (
+                      {(project.liveUrl) && (
                         <Button
                           size="small"
                           variant="outlined"
@@ -352,11 +378,11 @@ const ProjectManager = () => {
                           Demo
                         </Button>
                       )}
-                      {project.githubUrl && (
+                      {(project.githubUrl || project.githubLink) && (
                         <Button
                           size="small"
                           variant="outlined"
-                          href={project.githubUrl}
+                          href={project.githubUrl || project.githubLink}
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -369,7 +395,7 @@ const ProjectManager = () => {
                     <IconButton onClick={() => handleEdit(project)} color="primary">
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(project._id)} color="error">
+                    <IconButton onClick={() => handleDelete(project._id || project.id)} color="error">
                       <DeleteIcon />
                     </IconButton>
                   </TableCell>
