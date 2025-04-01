@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import './Hero.css'
+import profilePhoto from '../assets/images/1740750293644.jpeg'
 
 const Hero = () => {
   return (
@@ -87,7 +88,7 @@ const Hero = () => {
           transition={{ duration: 0.3 }}
         >
           <motion.img 
-            src='/images/profile-photo.jpeg' 
+            src={profilePhoto} 
             alt="Enes'in profil fotoğrafı"
             initial={{ scale: 1.1 }}
             animate={{ scale: 1 }}
