@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './Projects.css';
@@ -7,8 +7,20 @@ import waterImg from '../assets/water.png';
 import petsImg from '../assets/pets.png';
 import movieImg from '../assets/movie.png';
 
+interface Project {
+  _id?: string;
+  id?: number | string;
+  title: string;
+  description: string;
+  technologies: string[];
+  image?: string;
+  imageUrl?: string;
+  githubUrl?: string;
+  githubLink?: string;
+  liveUrl?: string;
+}
 
-const fallbackProjects = [
+const fallbackProjects: Project[] = [
   {
     id: 1,
     title: "E-Ticaret Oyun Key Satış Platformu",
@@ -43,8 +55,7 @@ const fallbackProjects = [
   }
 ];
 
-
-const fallbackImages = {
+const fallbackImages: Record<string | number, string> = {
   1: gameImg,
   2: waterImg,
   3: petsImg,
@@ -53,17 +64,18 @@ const fallbackImages = {
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-const Projects = () => {
+const Projects: React.FC = () => {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const projectsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
       setLoading(true);
       try {
-        let projectsData = [];
+        let projectsData: Project[] = [];
         
         // Try to fetch from API first
         if (API_URL) {
@@ -73,27 +85,26 @@ const Projects = () => {
               projectsData = response.data;
             }
           } catch (apiError) {
-            console.log('API fetch failed, using localStorage:', apiError.message);
+            console.log('API fetch failed, using localStorage:', (apiError as Error).message);
           }
         }
         
         // Get projects from localStorage
-        const localProjects = JSON.parse(localStorage.getItem('projects') || '[]');
+        const localProjects = JSON.parse(localStorage.getItem('projects') || '[]') as Project[];
         
         // Combine API and localStorage projects, giving priority to localStorage versions
-        // Create a map to track projects by ID to avoid duplicates
-        const projectMap = new Map();
+        const projectMap = new Map<string, Project>();
         
         // First add API projects to the map
         projectsData.forEach(project => {
           const projectId = project._id || project.id;
-          projectMap.set(projectId.toString(), project);
+          if (projectId) projectMap.set(projectId.toString(), project);
         });
         
         // Then override with localStorage projects (these are more up-to-date)
         localProjects.forEach(project => {
           const projectId = project._id || project.id;
-          projectMap.set(projectId.toString(), project);
+          if (projectId) projectMap.set(projectId.toString(), project);
         });
         
         // Convert map back to array
@@ -120,11 +131,35 @@ const Projects = () => {
     fetchProjects();
   }, []);
 
-  const handleProjectClick = (projectId) => {
+  useEffect(() => {
+    // Set up Intersection Observer for lazy loading images
+    if (projectsRef.current.length === 0) return;
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target.querySelector('img');
+          if (img && img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    
+    projectsRef.current.forEach(ref => {
+      if (ref) observer.observe(ref);
+    });
+    
+    return () => observer.disconnect();
+  }, [projects]);
+
+  const handleProjectClick = (projectId: string | number) => {
     navigate(`/projects/${projectId}`);
   };
 
-  const getProjectImage = (project) => {
+  const getProjectImage = (project: Project): string => {
     // If project has imageUrl, use it
     if (project.imageUrl) {
       // Check if it's a blob URL (created by URL.createObjectURL)
@@ -147,7 +182,8 @@ const Projects = () => {
     }
     
     // Otherwise use fallback image based on id
-    return fallbackImages[project._id] || fallbackImages[project.id] || fallbackImages[1];
+    const id = project._id || project.id;
+    return id ? (fallbackImages[id] || fallbackImages[1]) : fallbackImages[1];
   };
 
   if (loading) {
@@ -155,7 +191,7 @@ const Projects = () => {
       <section id="projects" className="projects-section">
         <div className="projects-container">
           <h2>Projelerim</h2>
-          <div style={{ textAlign: 'center', padding: '2rem' }}>Projeler yükleniyor...</div>
+          <div className="loading-projects">Projeler yükleniyor...</div>
         </div>
       </section>
     );
@@ -166,22 +202,32 @@ const Projects = () => {
       <div className="projects-container">
         <h2>Projelerim</h2>
         {error && (
-          <div style={{ color: 'orange', marginBottom: '1rem', textAlign: 'center' }}>
-            {error}
-          </div>
+          <div className="error-message">{error}</div>
         )}
         <div className="projects-grid">
-          {projects.map((project) => (
-            <div key={project._id || project.id} className="project-card">
+          {projects.map((project, index) => (
+            <div 
+              key={project._id || project.id} 
+              className="project-card"
+              ref={el => projectsRef.current[index] = el}
+            >
               <div className="project-image">
-                <img 
-                  src={getProjectImage(project)} 
-                  alt={project.title} 
-                  onError={(e) => {
-                    console.error('Image failed to load:', e.target.src);
-                    e.target.src = fallbackImages[1]; // Use a default fallback image
-                  }}
-                />
+                <picture>
+                  <source
+                    type="image/webp"
+                    data-srcset={`${getProjectImage(project).replace(/\.(png|jpg|jpeg)$/, '.webp')}`}
+                  />
+                  <img 
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" 
+                    data-src={getProjectImage(project)} 
+                    alt={project.title} 
+                    loading="lazy"
+                    onError={(e) => {
+                      console.error('Image failed to load:', e.currentTarget.src);
+                      e.currentTarget.src = fallbackImages[1]; // Use a default fallback image
+                    }}
+                  />
+                </picture>
               </div>
               <div className="project-content">
                 <h3>{project.title}</h3>
@@ -210,23 +256,7 @@ const Projects = () => {
                       Demo
                     </a>
                   )}
-                  <button 
-                    onClick={() => handleProjectClick(project._id || project.id)}
-                    style={{
-                      padding: '10px 20px',
-                      background: 'linear-gradient(45deg, #6a11cb, #2575fc)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '5px',
-                      cursor: 'pointer',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      transition: 'all 0.3s ease',
-                      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-                    }}
-                    onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                    onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                  >
+                  <button onClick={() => handleProjectClick(project._id || project.id || 0)}>
                     Detayları Gör
                   </button>
                 </div>

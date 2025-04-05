@@ -3,16 +3,17 @@
   top: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.95);
+  background-color: var(--bg-primary);
   backdrop-filter: blur(10px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
 
 .nav-container {
-  max-width: var(--max-width);
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem var(--desktop-padding);
+  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -21,13 +22,14 @@
 .nav-logo {
   font-size: clamp(1.25rem, 3vw, 1.5rem);
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   text-decoration: none;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-speed) ease, color var(--transition-speed) ease;
 }
 
 .nav-logo:hover {
   transform: translateY(-2px);
+  color: var(--primary-color);
 }
 
 .nav-menu {
@@ -37,17 +39,17 @@
 }
 
 .nav-link {
-  color: #333;
+  color: var(--text-primary);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1rem;
   border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
   position: relative;
 }
 
 .nav-link:hover {
-  color: #007bff;
+  color: var(--primary-color);
   background-color: rgba(0, 123, 255, 0.1);
 }
 
@@ -58,8 +60,8 @@
   left: 50%;
   width: 0;
   height: 2px;
-  background-color: #007bff;
-  transition: all 0.3s ease;
+  background-color: var(--primary-color);
+  transition: all var(--transition-speed) ease;
   transform: translateX(-50%);
 }
 
@@ -69,17 +71,17 @@
 
 .admin-button {
   color: white;
-  background-color: #007bff;
+  background-color: var(--primary-color);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 1.2rem;
   border-radius: 8px;
-  transition: all 0.3s ease;
+  transition: all var(--transition-speed) ease;
   box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
 }
 
 .admin-button:hover {
-  background-color: #0056b3;
+  background-color: var(--accent-secondary);
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
 }
@@ -91,11 +93,11 @@
   background: none;
   padding: 0.5rem;
   border-radius: 8px;
-  transition: background-color 0.3s ease;
+  transition: background-color var(--transition-speed) ease;
 }
 
 .hamburger:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-tertiary);
 }
 
 .bar {
@@ -103,14 +105,14 @@
   width: 25px;
   height: 3px;
   margin: 5px auto;
-  transition: all 0.3s ease;
-  background-color: #333;
+  transition: all var(--transition-speed) ease;
+  background-color: var(--text-primary);
   border-radius: 3px;
 }
 
 @media (max-width: 768px) {
   .nav-container {
-    padding: 0.8rem var(--mobile-padding);
+    padding: 0.8rem 1rem;
   }
 
   .hamburger {
@@ -136,7 +138,7 @@
     top: 70px;
     gap: 0;
     flex-direction: column;
-    background-color: rgba(255, 255, 255, 0.98);
+    background-color: var(--bg-primary);
     backdrop-filter: blur(10px);
     width: 100%;
     height: calc(100vh - 70px);

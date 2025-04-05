@@ -1,10 +1,21 @@
-import { createContext, useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { createContext, useState, useEffect, ReactNode } from 'react';
 
-const ThemeContext = createContext();
+interface ThemeContextType {
+  darkMode: boolean;
+  toggleTheme: () => void;
+}
 
-export const ThemeProvider = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(() => {
+const ThemeContext = createContext<ThemeContextType>({
+  darkMode: false,
+  toggleTheme: () => {}
+});
+
+interface ThemeProviderProps {
+  children: ReactNode;
+}
+
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
+  const [darkMode, setDarkMode] = useState<boolean>(() => {
     // Check localStorage for saved preference
     const savedTheme = localStorage.getItem('theme');
     return savedTheme ? savedTheme === 'dark' : false; // Default to light mode
@@ -33,10 +44,6 @@ export const ThemeProvider = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
-};
-
-ThemeProvider.propTypes = {
-  children: PropTypes.node.isRequired
 };
 
 export default ThemeContext;
