@@ -28,6 +28,37 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color var(--transition-speed) ease;
+  position: relative; /* For absolute positioning of background animations */
+}
+
+/* Background Animation */
+.background-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.animated-circle {
+  width: 100px;
+  height: 100px;
+  will-change: transform, opacity;
+}
+
+/* Make content appear above the animation */
+section, 
+.navbar, 
+.hero-container,
+.contact-container,
+.project-card,
+.about-container,
+.skills-container {
+  position: relative;
+  z-index: 1;
 }
 
 section {
