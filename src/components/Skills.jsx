@@ -8,187 +8,89 @@ import { BsBrushFill } from 'react-icons/bs'
 import { TbBrandReactNative } from 'react-icons/tb'
 import React from 'react'
 
-// Particle component for background animation
-const Particle = ({ active, color }) => {
-  const size = Math.random() * 10 + 5;
-  const duration = Math.random() * 10 + 10;
-  const initialX = Math.random() * 100;
-  const initialY = Math.random() * 100;
-  const initialScale = Math.random() * 0.5 + 0.5;
-  
+// Floating element decoration
+const FloatingElement = ({ delay = 0, size = 30, color = "#fff", top, left, opacity = 0.2 }) => {
   return (
     <motion.div
-      className="particle"
-      initial={{ 
-        x: `${initialX}%`, 
-        y: `${initialY}%`, 
-        scale: initialScale,
-        opacity: 0
+      className="floating-element"
+      style={{ 
+        position: 'absolute',
+        width: size,
+        height: size,
+        backgroundColor: color,
+        borderRadius: '50%',
+        top: top,
+        left: left,
+        filter: 'blur(8px)',
+        opacity: opacity
       }}
       animate={{
-        y: [`${initialY}%`, `${initialY - 30 + Math.random() * 60}%`],
-        x: [`${initialX}%`, `${initialX - 20 + Math.random() * 40}%`],
-        rotate: [0, Math.random() * 360],
-        scale: [initialScale, initialScale * 0.7, initialScale * 1.2, initialScale],
-        opacity: [0, 0.7, 0.7, 0]
+        y: [0, -15, 0, 15, 0],
+        x: [0, 10, 0, -10, 0],
+        scale: [1, 1.05, 1, 0.95, 1],
       }}
-      transition={{ 
-        duration: duration,
+      transition={{
+        duration: 15,
         repeat: Infinity,
-        repeatType: "loop",
-        ease: "easeInOut"
-      }}
-      style={{ 
-        width: size, 
-        height: size,
-        background: color || 'var(--primary-color)',
-        borderRadius: Math.random() > 0.5 ? '50%' : '30%',
-        filter: 'blur(1px)',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        zIndex: 0,
-        boxShadow: `0 0 10px ${color || 'var(--primary-color)'}`
+        repeatType: 'loop',
+        ease: 'easeInOut',
+        delay: delay
       }}
     />
   );
-};
+}
 
-// Background particles container
-const ParticlesBackground = ({ category }) => {
-  const count = 15; // Number of particles
-  const particles = [];
-  
-  // Get category color for particles
-  const color = (() => {
-    switch(category) {
-      case "Frontend": return "rgba(var(--frontend-color-rgb), 0.3)";
-      case "UI/UX Tasarım": return "rgba(var(--design-color-rgb), 0.3)";
-      case "Backend": return "rgba(var(--backend-color-rgb), 0.3)";
-      default: return "rgba(var(--primary-rgb), 0.3)";
-    }
-  })();
-  
-  for (let i = 0; i < count; i++) {
-    particles.push(
-      <Particle key={i} active={true} color={color} />
-    );
-  }
-  
+// Background decoration
+const BackgroundDecoration = () => {
   return (
-    <div className="particles-container">
-      {particles}
+    <div className="skills-bg-decoration">
+      <FloatingElement size={100} top="10%" left="5%" color="rgba(var(--frontend-color-rgb), 0.2)" delay={0} />
+      <FloatingElement size={60} top="25%" left="15%" color="rgba(var(--design-color-rgb), 0.2)" delay={2} />
+      <FloatingElement size={80} top="60%" left="8%" color="rgba(var(--backend-color-rgb), 0.2)" delay={4} />
+      <FloatingElement size={120} top="15%" left="85%" color="rgba(var(--frontend-color-rgb), 0.2)" delay={1} />
+      <FloatingElement size={70} top="50%" left="90%" color="rgba(var(--design-color-rgb), 0.2)" delay={3} />
+      <FloatingElement size={90} top="75%" left="80%" color="rgba(var(--backend-color-rgb), 0.2)" delay={5} />
     </div>
   );
+}
+
+// Eksik fonksiyon eklendi
+const getIconComponent = (iconName) => {
+  switch (iconName) {
+    case 'FaHtml5': return <FaHtml5 />;
+    case 'FaCss3Alt': return <FaCss3Alt />;
+    case 'FaJs': return <FaJs />;
+    case 'FaReact': return <FaReact />;
+    case 'FaVuejs': return <FaVuejs />;
+    case 'FaGitAlt': return <FaGitAlt />;
+    case 'FaNodeJs': return <FaNodeJs />;
+    case 'FaSass': return <FaSass />;
+    case 'FaGithub': return <FaGithub />;
+    case 'SiTypescript': return <SiTypescript />;
+    case 'SiAdobexd': return <SiAdobexd />;
+    case 'SiFigma': return <SiFigma />;
+    case 'SiPostman': return <SiPostman />;
+    case 'SiReacthookform': return <SiReacthookform />;
+    case 'SiExpress': return <SiExpress />;
+    case 'SiPassport': return <SiPassport />;
+    case 'SiPostgresql': return <SiPostgresql />;
+    case 'SiPrisma': return <SiPrisma />;
+    case 'SiNestjs': return <SiNestjs />;
+    case 'MdDevices': return <MdDevices />;
+    case 'MdStorage': return <MdStorage />;
+    case 'BsBrushFill': return <BsBrushFill />;
+    case 'TbBrandReactNative': return <TbBrandReactNative />;
+    default: return <FaReact />;
+  }
 };
 
 const Skills = () => {
   const [activeCategory, setActiveCategory] = useState("Frontend");
   const [skills, setSkills] = useState([]);
-  const [counters, setCounters] = useState({});
   const skillsContainerRef = useRef(null);
-
-  // Helper for circular progress animation
-  const CircleProgress = ({ percentage, color }) => {
-    const circleRef = useRef(null);
-    const textRef = useRef(null);
-    const [count, setCount] = useState(0);
-    
-    useEffect(() => {
-      if (circleRef.current) {
-        const radius = circleRef.current.r.baseVal.value;
-        const circumference = radius * 2 * Math.PI;
-        const offset = circumference - (percentage / 100) * circumference;
-        circleRef.current.style.strokeDasharray = `${circumference} ${circumference}`;
-        circleRef.current.style.strokeDashoffset = offset;
-        circleRef.current.style.stroke = color || 'var(--primary-color)';
-      }
-      
-      // Counter animation
-      let startCount = 0;
-      const duration = 1200;
-      const step = percentage / (duration / 16); // 16ms per frame at 60fps
-      
-      const counter = setInterval(() => {
-        startCount += step;
-        if (startCount > percentage) {
-          setCount(percentage);
-          clearInterval(counter);
-        } else {
-          setCount(Math.floor(startCount));
-        }
-      }, 16);
-      
-      return () => clearInterval(counter);
-    }, [percentage, color]);
-    
-    return (
-      <div className="skill-progress-circle">
-        <svg className="progress-ring" width="80" height="80">
-          <circle 
-            className="progress-ring__background"
-            strokeWidth="8"
-            r="34"
-            cx="40"
-            cy="40" 
-          />
-          <circle 
-            ref={circleRef}
-            className="progress-ring__circle"
-            strokeWidth="8"
-            r="34"
-            cx="40"
-            cy="40" 
-          />
-        </svg>
-        <div ref={textRef} className="progress-text">{count}%</div>
-      </div>
-    );
-  };
-  
-  const getIconComponent = (iconName) => {
-    switch (iconName) {
-      case 'FaHtml5': return <FaHtml5 />;
-      case 'FaCss3Alt': return <FaCss3Alt />;
-      case 'FaJs': return <FaJs />;
-      case 'FaReact': return <FaReact />;
-      case 'FaVuejs': return <FaVuejs />;
-      case 'FaGitAlt': return <FaGitAlt />;
-      case 'FaNodeJs': return <FaNodeJs />;
-      case 'FaSass': return <FaSass />;
-      case 'FaGithub': return <FaGithub />;
-      case 'SiTypescript': return <SiTypescript />;
-      case 'SiAdobexd': return <SiAdobexd />;
-      case 'SiFigma': return <SiFigma />;
-      case 'SiPostman': return <SiPostman />;
-      case 'SiReacthookform': return <SiReacthookform />;
-      case 'SiExpress': return <SiExpress />;
-      case 'SiPassport': return <SiPassport />;
-      case 'SiPostgresql': return <SiPostgresql />;
-      case 'SiPrisma': return <SiPrisma />;
-      case 'SiNestjs': return <SiNestjs />;
-      case 'MdDevices': return <MdDevices />;
-      case 'MdStorage': return <MdStorage />;
-      case 'BsBrushFill': return <BsBrushFill />;
-      case 'TbBrandReactNative': return <TbBrandReactNative />;
-      default: return <FaReact />;
-    }
-  };
-
-  const getCategoryIcon = (iconName) => {
-    const icon = getIconComponent(iconName);
-    return React.cloneElement(icon, { className: "category-icon" });
-  };
-  
-  // Get category-specific color
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case "Frontend": return "var(--frontend-color)";
-      case "UI/UX Tasarım": return "var(--design-color)";
-      case "Backend": return "var(--backend-color)";
-      default: return "var(--primary-color)";
-    }
-  };
+  const [isHovering, setIsHovering] = useState(false);
+  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
+  const [activeSkill, setActiveSkill] = useState(null);
 
   useEffect(() => {
     const savedSkills = localStorage.getItem('skillCategories');
@@ -197,7 +99,7 @@ const Skills = () => {
       
       const transformedSkills = parsedSkills.map(category => ({
         ...category,
-        icon: getCategoryIcon(category.icon),
+        icon: getIconComponent(category.icon),
         items: category.items.map(item => ({
           ...item,
           icon: getIconComponent(item.icon)
@@ -213,7 +115,7 @@ const Skills = () => {
       const defaultSkills = [
         {
           category: "Frontend",
-          icon: <FaReact className="category-icon" />,
+          icon: <FaReact />,
           description: "Modern web teknolojileri ile kullanıcı deneyimi odaklı geliştirme",
           items: [
             { name: "HTML5", level: 90, icon: <FaHtml5 /> },
@@ -232,7 +134,7 @@ const Skills = () => {
         },
         {
           category: "UI/UX Tasarım",
-          icon: <BsBrushFill className="category-icon" />,
+          icon: <BsBrushFill />,
           description: "Kullanıcı odaklı arayüz tasarımı ve deneyim optimizasyonu",
           items: [
             { name: "Figma", level: 85, icon: <SiFigma /> },
@@ -243,7 +145,7 @@ const Skills = () => {
         },
         {
           category: "Backend",
-          icon: <FaNodeJs className="category-icon" />,
+          icon: <FaNodeJs />,
           description: "Sunucu tarafı teknolojileri ve veritabanı yönetimi",
           items: [
             { name: "Node.js", level: 80, icon: <FaNodeJs /> },
@@ -260,149 +162,51 @@ const Skills = () => {
     }
   }, [activeCategory]);
 
-  // Animation for counter numbers
-  useEffect(() => {
-    const currentSkillGroup = getActiveSkillGroup();
-    const newCounters = {};
-    
-    currentSkillGroup.items.forEach(skill => {
-      let count = 0;
-      const interval = setInterval(() => {
-        count += 1;
-        if (count > skill.level) {
-          clearInterval(interval);
-        } else {
-          newCounters[skill.name] = count;
-          setCounters({...newCounters});
-        }
-      }, 20);
-    });
-    
-    return () => {
-      currentSkillGroup.items.forEach(skill => {
-        clearInterval(skill.name);
-      });
-    };
-  }, [activeCategory]);
+  const handleCategoryMouseEnter = (e, category) => {
+    setActiveCategory(category);
+  };
 
   const getActiveSkillGroup = () => {
     return skills.find(group => group.category === activeCategory) || { items: [] };
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+  const handleMouseMove = (e) => {
+    if (skillsContainerRef.current) {
+      const bounds = skillsContainerRef.current.getBoundingClientRect();
+      const x = (e.clientX - bounds.left) / bounds.width;
+      const y = (e.clientY - bounds.top) / bounds.height;
+      setHoverPosition({ x, y });
     }
-  }
-
-  const skillBarVariants = {
-    hidden: { width: 0 },
-    visible: width => ({
-      width: `${width}%`,
-      transition: { duration: 1.2, ease: [0.43, 0.13, 0.23, 0.96] }
-    })
-  }
-
-  const tabVariants = {
-    inactive: { 
-      scale: 0.95, 
-      opacity: 0.7,
-      y: 0
-    },
-    active: { 
-      scale: 1, 
-      opacity: 1,
-      y: -10,
-      transition: { type: "spring", stiffness: 400, damping: 20 }
-    }
-  }
-
-  const cardVariants = {
-    hidden: { 
-      opacity: 0,
-      y: 30,
-      rotateX: 10
-    },
-    visible: { 
-      opacity: 1,
-      y: 0,
-      rotateX: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.43, 0.13, 0.23, 0.96]
-      }
-    }
-  }
-
-  const iconVariants = {
-    hidden: { scale: 0, rotate: -180 },
-    visible: { 
-      scale: 1, 
-      rotate: 0,
-      transition: {
-        type: "spring",
-        stiffness: 300,
-        damping: 15
-      }
-    },
-    hover: { 
-      scale: 1.2,
-      rotate: 15,
-      transition: { 
-        duration: 0.3,
-        type: "spring",
-        stiffness: 400
-      }
-    }
-  }
-
-  // 3D Card Tilt Effect
-  const handleCardTilt = (e, card) => {
-    if (!card) return;
-    
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const midX = rect.width / 2;
-    const midY = rect.height / 2;
-    
-    const offsetX = ((x - midX) / midX) * 10;
-    const offsetY = ((y - midY) / midY) * 10;
-    
-    card.style.transform = `perspective(1000px) rotateX(${-offsetY}deg) rotateY(${offsetX}deg) scale3d(1.02, 1.02, 1.02)`;
-  };
-  
-  const resetCardTilt = (card) => {
-    if (!card) return;
-    card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
   };
 
-  // Attach event listeners for card tilt
-  useEffect(() => {
-    const cards = document.querySelectorAll('.skill-item-card');
-    
-    cards.forEach(card => {
-      card.addEventListener('mousemove', (e) => handleCardTilt(e, card));
-      card.addEventListener('mouseleave', () => resetCardTilt(card));
-    });
-    
-    return () => {
-      cards.forEach(card => {
-        card.removeEventListener('mousemove', (e) => handleCardTilt(e, card));
-        card.removeEventListener('mouseleave', () => resetCardTilt(card));
-      });
-    };
-  }, [activeCategory]);
+  const getCategoryGradient = (category) => {
+    switch(category) {
+      case "Frontend": return "linear-gradient(135deg, rgba(var(--frontend-color-rgb), 0.95), rgba(var(--primary-rgb), 0.95))";
+      case "UI/UX Tasarım": return "linear-gradient(135deg, rgba(var(--design-color-rgb), 0.95), rgba(156, 136, 255, 0.95))";
+      case "Backend": return "linear-gradient(135deg, rgba(var(--backend-color-rgb), 0.95), rgba(49, 151, 149, 0.95))";
+      default: return "linear-gradient(135deg, rgba(var(--primary-rgb), 0.95), rgba(var(--secondary-rgb), 0.95))";
+    }
+  };
+
+  const getCategoryColor = (category) => {
+    switch (category) {
+      case "Frontend": return "var(--frontend-color)";
+      case "UI/UX Tasarım": return "var(--design-color)";
+      case "Backend": return "var(--backend-color)";
+      default: return "var(--primary-color)";
+    }
+  };
 
   return (
-    <section id="skills" className="skills-section" ref={skillsContainerRef}>
-      <ParticlesBackground category={activeCategory} />
-      <div className="container">
+    <section id="skills" 
+      className="skills-section" 
+      ref={skillsContainerRef}
+      onMouseMove={handleMouseMove}
+      data-active-category={activeCategory}
+    >
+      <BackgroundDecoration />
+      
+      <div className="skills-container">
         <motion.div 
           className="skills-header"
           initial={{ opacity: 0, y: -40 }}
@@ -413,141 +217,119 @@ const Skills = () => {
           <h2 className="skills-title">Yeteneklerim</h2>
           <p className="skills-subtitle">Profesyonel olarak kullandığım teknolojiler ve araçlar</p>
         </motion.div>
-
-        <div className="skills-tabs-container">
-          <motion.div 
-            className="skills-tabs"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
-          >
-            {skills.map((skillGroup, index) => (
-              <motion.div
-                key={index}
-                className={`skill-tab ${activeCategory === skillGroup.category ? 'active' : ''}`}
-                onClick={() => setActiveCategory(skillGroup.category)}
-                variants={tabVariants}
-                initial="inactive"
-                animate={activeCategory === skillGroup.category ? "active" : "inactive"}
-                whileHover={{ scale: 1.05, y: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                style={{ '--i': index }}
-                data-category={skillGroup.category}
-              >
-                <motion.div 
-                  className="skill-tab-icon"
-                  variants={iconVariants}
-                  initial="hidden"
-                  animate="visible"
-                  whileHover="hover"
-                >
-                  {skillGroup.icon}
-                </motion.div>
-                <span>{skillGroup.category}</span>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-
-        <AnimatePresence mode="wait">
-          <motion.div 
-            className="skills-content"
-            key={activeCategory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
-            <motion.div 
-              className="skills-category-info"
-              variants={cardVariants}
-              initial="hidden"
-              whileInView="visible"
+        
+        {/* Category Cards */}
+        <div className="skills-categories-container">
+          {skills.map((category, idx) => (
+            <motion.div
+              key={idx}
+              className={`skill-category-card ${activeCategory === category.category ? 'active' : ''}`}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              data-category={activeCategory}
+              transition={{ delay: idx * 0.1, duration: 0.6 }}
+              onClick={() => setActiveCategory(category.category)}
+              onMouseEnter={(e) => handleCategoryMouseEnter(e, category.category)}
+              style={{ 
+                background: activeCategory === category.category 
+                  ? getCategoryGradient(category.category)
+                  : 'var(--card-bg)'
+              }}
+              whileHover={{
+                scale: 1.03,
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
             >
               <motion.div 
-                className="category-icon-large"
-                whileHover={{ 
-                  scale: 1.1, 
-                  rotate: 5,
-                  transition: { duration: 0.3, type: "spring" } 
-                }}
+                className="category-icon"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: idx * 0.1 + 0.2, type: "spring", stiffness: 400, damping: 10 }}
               >
-                {getActiveSkillGroup().icon}
+                {category.icon}
               </motion.div>
-              <div className="category-details">
-                <h3>{getActiveSkillGroup().category}</h3>
-                <p>{getActiveSkillGroup().description}</p>
+              <div className="category-content">
+                <h3>{category.category}</h3>
+                <p>{category.description}</p>
               </div>
             </motion.div>
-
+          ))}
+        </div>
+        
+        {/* Skills Cards Grid */}
+        <motion.div 
+          className="skills-grid-container"
+          style={{ '--hover-x': `${hoverPosition.x * 100}%`, '--hover-y': `${hoverPosition.y * 100}%` }}
+        >
+          <AnimatePresence mode="wait">
             <motion.div 
+              key={activeCategory}
               className="skills-grid"
-              variants={containerVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              data-category={activeCategory}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              {getActiveSkillGroup().items.map((skill, index) => (
-                <motion.div 
-                  className="skill-item-card"
-                  key={index}
-                  initial={{ opacity: 0, y: 30, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true }}
+              {getActiveSkillGroup().items.map((skill, idx) => (
+                <motion.div
+                  key={idx}
+                  className="skill-card"
+                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
                   transition={{ 
-                    delay: index * 0.08, 
-                    duration: 0.6, 
-                    ease: [0.43, 0.13, 0.23, 0.96] 
+                    delay: idx * 0.05, 
+                    duration: 0.5,
+                    type: "spring",
+                    stiffness: 100
                   }}
-                  style={{ '--i': index, transition: 'transform 0.2s ease-out' }}
+                  whileHover={{
+                    scale: 1.05,
+                    boxShadow: `0 10px 20px rgba(0,0,0,0.1), 
+                                0 0 15px rgba(var(--${activeCategory === "Frontend" ? "frontend" : activeCategory === "UI/UX Tasarım" ? "design" : "backend"}-color-rgb), 0.5)`,
+                    transition: { duration: 0.3, ease: "easeOut" }
+                  }}
+                  onMouseEnter={() => setActiveSkill(skill.name)}
+                  onMouseLeave={() => setActiveSkill(null)}
                 >
-                  <div className="card-glow"></div>
-                  <div className="skill-item-header">
-                    <motion.div 
-                      className="skill-item-icon"
-                      variants={iconVariants}
-                      initial="hidden"
-                      animate="visible"
-                      whileHover="hover"
-                      style={{ '--i': index }}
-                    >
-                      {skill.icon}
-                    </motion.div>
-                    <h4 className="skill-item-name">{skill.name}</h4>
+                  <div className="skill-card-glow" />
+                  
+                  <div className="skill-card-content">
+                    <div className="skill-icon-wrapper">
+                      <motion.div 
+                        className="skill-icon"
+                        whileHover={{ rotate: [0, -5, 5, -5, 0], scale: 1.2 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        {skill.icon}
+                      </motion.div>
+                    </div>
+                    
+                    <div className="skill-info">
+                      <h4 className="skill-name">{skill.name}</h4>
+                      
+                      <div className="skill-level-container">
+                        <div className="skill-level-bar">
+                          <motion.div 
+                            className="skill-level-fill"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${skill.level}%` }}
+                            transition={{ delay: idx * 0.05 + 0.2, duration: 0.8, ease: "easeOut" }}
+                            style={{ 
+                              background: `var(--${activeCategory === "Frontend" ? "frontend" : activeCategory === "UI/UX Tasarım" ? "design" : "backend"}-color)`
+                            }}
+                          />
+                        </div>
+                        <span className="skill-level-text">{skill.level}%</span>
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="skill-progress-container">
-                    <div className="skill-level-label">
-                      <span>Uzmanlık</span>
-                      <span className="skill-percentage">
-                        {counters[skill.name] || 0}%
-                      </span>
-                    </div>
-                    <div className="skill-progress-bar">
-                      <motion.div 
-                        className="skill-progress-fill"
-                        custom={skill.level}
-                        variants={skillBarVariants}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true }}
-                        style={{ '--i': index }}
-                      />
-                    </div>
-                    <CircleProgress 
-                      percentage={skill.level} 
-                      color={getCategoryColor(activeCategory)} 
-                    />
-                  </div>
+                  <div className="skill-card-backdrop" />
                 </motion.div>
               ))}
             </motion.div>
-          </motion.div>
-        </AnimatePresence>
+          </AnimatePresence>
+        </motion.div>
       </div>
     </section>
   )
