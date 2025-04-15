@@ -31,8 +31,9 @@ function App() {
   return (
     <ThemeProvider>
       <Router>
-        <div className="app">
-          <Navbar />
+        <div className={`app ${window.location.hash.includes('/admin') ? 'admin-page' : ''}`}>
+          {/* Navbar'ı admin sayfalarında gösterme */}
+          {!window.location.hash.includes('/admin') && <Navbar />}
           <Suspense fallback={<LoadingScreen />}>
             <Routes>
               <Route path="/" element={

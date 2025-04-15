@@ -2,6 +2,8 @@ import { motion } from 'framer-motion'
 import './Hero.css'
 import { useEffect, useRef, useState } from 'react'
 import TypewriterText from './animations/TypewriterText'
+import Lottie from 'lottie-react';
+import heroAnimation from '../assets/hero-lottie.json';
 
 // Animate variants for more efficient animation reuse
 const containerVariants = {
@@ -46,6 +48,10 @@ const Hero: React.FC = () => {
 
   return (
     <section className="hero">
+      {/* Animated SVG/Lottie background */}
+      <div className="hero-bg-animation">
+        <Lottie animationData={heroAnimation} loop autoPlay style={{ width: '100%', height: '100%' }} />
+      </div>
       <motion.div 
         className="hero-content"
         variants={containerVariants}
@@ -53,7 +59,7 @@ const Hero: React.FC = () => {
         animate="visible"
       >
         <motion.h1 
-          className="hero-title"
+          className="hero-title gradient-title"
           variants={itemVariants}
         >
           <TypewriterText 
@@ -64,13 +70,14 @@ const Hero: React.FC = () => {
           />
           {typewriterComplete && (
             <motion.span 
-              className="highlight"
+              className="highlight gradient-highlight"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
               whileHover={{ 
-                scale: 1.1,
-                color: "#007bff",
+                scale: 1.15,
+                color: "#ff4ecd",
+                textShadow: "0 0 16px #ff4ecd80",
                 transition: { duration: 0.2 }
               }}
               onAnimationComplete={() => setShowTitles(true)}
@@ -79,7 +86,6 @@ const Hero: React.FC = () => {
             </motion.span>
           )}
         </motion.h1>
-        
         {showTitles && (
           <>
             <motion.p 
@@ -102,59 +108,23 @@ const Hero: React.FC = () => {
               Modern ve kullanıcı dostu web uygulamaları geliştiriyorum.
               Yaratıcı çözümler ve etkileyici kullanıcı deneyimleri sunuyorum.
             </motion.p>
-            <motion.div 
-              className="hero-buttons"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 2 }}
-            >
-              <motion.a 
-                href="#contact" 
-                className="btn btn-primary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                İletişime Geç
-              </motion.a>
-              <motion.a 
-                href="/cv/Enes_CV.pdf" 
-                className="btn btn-outline"
-                download="Enes_CV.pdf"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                CV İndir
-              </motion.a>
-              <motion.a 
-                href="#projects" 
-                className="btn btn-secondary"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Projelerimi Gör
-              </motion.a>
-            </motion.div>
           </>
         )}
-      </motion.div>
-      <motion.div 
-        className="hero-image"
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-      >
+        {/* CTA Buttons */}
+        <div className="hero-buttons">
+          <a href="#projects" className="cta-btn primary">Projelerim</a>
+          <a href="#contact" className="cta-btn secondary">İletişim</a>
+          <a href="/cv/Enes_CV.pdf" className="cta-btn secondary" download="Enes_CV.pdf">CV İndir</a>
+        </div>
+        {/* Profile photo with animated border */}
         <motion.div 
-          className="image-container"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.3 }}
+          className="hero-photo-container"
+          initial={{ opacity: 0, scale: 0.7 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1, duration: 0.7 }}
+          whileHover={{ scale: 1.04, boxShadow: "0 8px 32px #ff4ecd40" }}
         >
-          <img 
-            ref={imgRef}
-            src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" 
-            alt="Enes'in profil fotoğrafı"
-            loading="eager"
-            className="profile-image"
-          />
+          <img ref={imgRef} className="hero-photo" src="/images/profile-photo.jpeg" alt="Enes" />
         </motion.div>
       </motion.div>
     </section>

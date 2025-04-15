@@ -6,6 +6,8 @@ import gameImg from '../assets/game.png';
 import waterImg from '../assets/water.png';
 import petsImg from '../assets/pets.png';
 import movieImg from '../assets/movie.png';
+import { motion } from 'framer-motion';
+import { FaGithub, FaExternalLinkAlt } from 'react-icons/fa';
 
 interface Project {
   _id?: string;
@@ -198,62 +200,52 @@ const Projects: React.FC = () => {
   }
 
   return (
-    <section id="projects" className="projects-section">
+    <section className="projects-section">
+      <motion.h2 
+        className="projects-title gradient-title"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        Projelerim
+      </motion.h2>
       <div className="projects-container">
-        <h2>Projelerim</h2>
-        {error && (
-          <div className="error-message">{error}</div>
-        )}
         <div className="projects-grid">
-          {projects.map((project, index) => (
-            <div 
-              key={project._id || project.id} 
-              className="project-card"
-              ref={el => projectsRef.current[index] = el}
+          {projects.map((project, idx) => (
+            <motion.div
+              className="project-card gradient-card"
+              key={project.id || idx}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1, duration: 0.7, type: 'spring' }}
+              whileHover={{ scale: 1.04, boxShadow: "0 12px 40px #ff4ecd60" }}
             >
               <div className="project-image">
-                <picture>
-                  <source
-                    type="image/webp"
-                    data-srcset={`${getProjectImage(project).replace(/\.(png|jpg|jpeg)$/, '.webp')}`}
-                  />
-                  <img 
-                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1 1'%3E%3C/svg%3E" 
-                    data-src={getProjectImage(project)} 
-                    alt={project.title} 
-                    loading="lazy"
-                    onError={(e) => {
-                      console.error('Image failed to load:', e.currentTarget.src);
-                      e.currentTarget.src = fallbackImages[1]; // Use a default fallback image
-                    }}
-                  />
-                </picture>
+                <img 
+                  src={getProjectImage(project)} 
+                  alt={project.title}
+                  className="project-img"
+                />
               </div>
               <div className="project-content">
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
-                <div className="project-technologies">
-                  {(project.technologies || []).map((tech, index) => (
-                    <span key={index}>{tech}</span>
+                <div className="project-tech-list">
+                  {project.technologies.map((tech, i) => (
+                    <span className="project-tech gradient-border" key={i}>{tech}</span>
                   ))}
                 </div>
                 <div className="project-links">
-                  {(project.githubUrl || project.githubLink) && (
-                    <a 
-                      href={project.githubUrl || project.githubLink} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      GitHub
+                  {project.githubLink && (
+                    <a href={project.githubLink} target="_blank" rel="noopener noreferrer" className="project-link github">
+                      <FaGithub className="icon" />
+                      <span>Github</span>
                     </a>
                   )}
                   {project.liveUrl && (
-                    <a 
-                      href={project.liveUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      Demo
+                    <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="project-link live">
+                      <FaExternalLinkAlt className="icon" />
+                      <span>Canlı</span>
                     </a>
                   )}
                   <button onClick={() => handleProjectClick(project._id || project.id || 0)}>
@@ -261,7 +253,7 @@ const Projects: React.FC = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

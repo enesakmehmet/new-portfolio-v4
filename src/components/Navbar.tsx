@@ -15,20 +15,19 @@ const Navbar: React.FC = () => {
   }, [location]);
 
   return (
-    <nav className="navbar">
+    <nav className="navbar gradient-navbar">
       <div className="nav-container">
-        <Link to="/" className="nav-logo">
+        <Link to="/" className="nav-logo gradient-logo">
           𝓔𝓷𝓮𝓼 𝓐𝓴𝓶𝓮𝓱𝓶𝓮𝓽
         </Link>
 
         <div className={`nav-menu ${isOpen ? 'active' : ''}`}>
-          <Link to="/" className="nav-link">Anasayfa</Link>
-          <Link to="/about" className="nav-link">Hakkımda</Link>
-          <Link to="/projects" className="nav-link">Projeler</Link>
-          <Link to="/skills" className="nav-link">Yetenekler</Link>
-          <Link to="/contact" className="nav-link">İletişim</Link>
-          <Link to="/admin" className="admin-button">Admin</Link>
-          
+          <Link to="/" className={`nav-link${location.pathname === '/' ? ' active' : ''}`}>Anasayfa</Link>
+          <Link to="/about" className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}>Hakkımda</Link>
+          <Link to="/projects" className={`nav-link${location.pathname.startsWith('/projects') ? ' active' : ''}`}>Projeler</Link>
+          <Link to="/skills" className={`nav-link${location.pathname === '/skills' ? ' active' : ''}`}>Yetenekler</Link>
+          <Link to="/contact" className={`nav-link${location.pathname === '/contact' ? ' active' : ''}`}>İletişim</Link>
+          <Link to="/admin" className="admin-button gradient-btn">Admin</Link>
           <button 
             className="theme-toggle-btn" 
             onClick={toggleTheme}

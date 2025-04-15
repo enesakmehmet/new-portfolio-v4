@@ -29,7 +29,7 @@ const DashboardHome = () => {
                 }}
                 elevation={2}
               >
-                <IconComponent
+                <IconComponentgit
                   sx={{
                     fontSize: 40,
                     color: stat.color,

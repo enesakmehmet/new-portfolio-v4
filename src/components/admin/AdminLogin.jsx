@@ -60,6 +60,22 @@ const AdminLogin = ({ setIsAuthenticated }) => {
             fullWidth
             required
             autoComplete="username"
+            InputProps={{
+              style: { color: '#000' } // Yazı rengini siyah yap
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.5)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(0, 0, 0, 0.6)',
+              },
+            }}
           />
           <TextField
             label="Şifre"
@@ -70,6 +86,22 @@ const AdminLogin = ({ setIsAuthenticated }) => {
             fullWidth
             required
             autoComplete="current-password"
+            InputProps={{
+              style: { color: '#000' } // Yazı rengini siyah yap
+            }}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.23)',
+                },
+                '&:hover fieldset': {
+                  borderColor: 'rgba(0, 0, 0, 0.5)',
+                },
+              },
+              '& .MuiInputLabel-root': {
+                color: 'rgba(0, 0, 0, 0.6)',
+              },
+            }}
           />
           {error && (
             <Typography color="error" variant="body2" align="center">

@@ -206,48 +206,34 @@ const Skills = () => {
     >
       <BackgroundDecoration />
       
+      <motion.div 
+        className="skills-header"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+      >
+        <h2 className="skills-title gradient-title">Yeteneklerim</h2>
+        <p className="skills-subtitle">Modern web teknolojileri, arayüz ve backend geliştirme konularında uzmanım.</p>
+      </motion.div>
+      
       <div className="skills-container">
-        <motion.div 
-          className="skills-header"
-          initial={{ opacity: 0, y: -40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.7, ease: [0.43, 0.13, 0.23, 0.96] }}
-        >
-          <h2 className="skills-title">Yeteneklerim</h2>
-          <p className="skills-subtitle">Profesyonel olarak kullandığım teknolojiler ve araçlar</p>
-        </motion.div>
-        
-        {/* Category Cards */}
-        <div className="skills-categories-container">
+        <div className="skill-category-list">
           {skills.map((category, idx) => (
             <motion.div
-              key={idx}
-              className={`skill-category-card ${activeCategory === category.category ? 'active' : ''}`}
-              initial={{ opacity: 0, y: 30 }}
+              className={`skill-category-card gradient-border${activeCategory === category.category ? ' active' : ''}`}
+              key={category.category}
+              initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: idx * 0.1, duration: 0.6 }}
+              transition={{ delay: idx * 0.1, duration: 0.7, type: 'spring' }}
+              whileHover={{ scale: 1.04, boxShadow: "0 8px 32px #ff4ecd60" }}
               onClick={() => setActiveCategory(category.category)}
               onMouseEnter={(e) => handleCategoryMouseEnter(e, category.category)}
-              style={{ 
-                background: activeCategory === category.category 
-                  ? getCategoryGradient(category.category)
-                  : 'var(--card-bg)'
-              }}
-              whileHover={{
-                scale: 1.03,
-                transition: { duration: 0.3, ease: "easeOut" }
-              }}
             >
-              <motion.div 
-                className="category-icon"
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: idx * 0.1 + 0.2, type: "spring", stiffness: 400, damping: 10 }}
-              >
+              <div className="category-icon gradient-bg">
                 {category.icon}
-              </motion.div>
+              </div>
               <div className="category-content">
                 <h3>{category.category}</h3>
                 <p>{category.description}</p>
@@ -256,83 +242,46 @@ const Skills = () => {
           ))}
         </div>
         
-        {/* Skills Cards Grid */}
         <motion.div 
-          className="skills-grid-container"
-          style={{ '--hover-x': `${hoverPosition.x * 100}%`, '--hover-y': `${hoverPosition.y * 100}%` }}
+          className="skills-list-container"
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={activeCategory}
-              className="skills-grid"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              {getActiveSkillGroup().items.map((skill, idx) => (
-                <motion.div
-                  key={idx}
-                  className="skill-card"
-                  initial={{ opacity: 0, y: 20, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ 
-                    delay: idx * 0.05, 
-                    duration: 0.5,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  whileHover={{
-                    scale: 1.05,
-                    boxShadow: `0 10px 20px rgba(0,0,0,0.1), 
-                                0 0 15px rgba(var(--${activeCategory === "Frontend" ? "frontend" : activeCategory === "UI/UX Tasarım" ? "design" : "backend"}-color-rgb), 0.5)`,
-                    transition: { duration: 0.3, ease: "easeOut" }
-                  }}
-                  onMouseEnter={() => setActiveSkill(skill.name)}
-                  onMouseLeave={() => setActiveSkill(null)}
-                >
-                  <div className="skill-card-glow" />
-                  
-                  <div className="skill-card-content">
-                    <div className="skill-icon-wrapper">
-                      <motion.div 
-                        className="skill-icon"
-                        whileHover={{ rotate: [0, -5, 5, -5, 0], scale: 1.2 }}
-                        transition={{ duration: 0.5 }}
-                      >
-                        {skill.icon}
-                      </motion.div>
-                    </div>
-                    
-                    <div className="skill-info">
-                      <h4 className="skill-name">{skill.name}</h4>
-                      
-                      <div className="skill-level-container">
-                        <div className="skill-level-bar">
-                          <motion.div 
-                            className="skill-level-fill"
-                            initial={{ width: 0 }}
-                            animate={{ width: `${skill.level}%` }}
-                            transition={{ delay: idx * 0.05 + 0.2, duration: 0.8, ease: "easeOut" }}
-                            style={{ 
-                              background: `var(--${activeCategory === "Frontend" ? "frontend" : activeCategory === "UI/UX Tasarım" ? "design" : "backend"}-color)`
-                            }}
-                          />
-                        </div>
-                        <span className="skill-level-text">{skill.level}%</span>
-                      </div>
-                    </div>
+          <div className="skills-list">
+            {getActiveSkillGroup().items.map((skill, idx) => (
+              <motion.div
+                className="skill-card gradient-card"
+                key={skill.name}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.07, duration: 0.6, type: 'spring' }}
+                whileHover={{ scale: 1.06, boxShadow: "0 6px 24px #ff4ecd90" }}
+              >
+                <div className="skill-icon gradient-bg">
+                  {skill.icon}
+                </div>
+                <div className="skill-info">
+                  <span className="skill-name">{skill.name}</span>
+                  <div className="skill-bar-bg">
+                    <motion.div
+                      className="skill-bar gradient-bar"
+                      initial={{ width: 0 }}
+                      animate={{ width: skill.level + '%' }}
+                      transition={{ duration: 1.2, delay: 0.2 + idx * 0.05, type: 'spring' }}
+                    />
                   </div>
-                  
-                  <div className="skill-card-backdrop" />
-                </motion.div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
+                  <span className="skill-level-text">%{skill.level}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </div>
     </section>
-  )
+  );
 }
 
 export default Skills
