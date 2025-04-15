@@ -134,7 +134,7 @@
 
 .hero-image {
   flex: 1;
-  max-width: 500px;
+  max-width: 450px;
   position: relative;
   z-index: 1;
 }
@@ -144,6 +144,16 @@
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  width: 80%;
+  margin: 0 auto;
+}
+
+.image-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  transition: transform 0.5s ease;
+  object-fit: cover;
 }
 
 .image-container::before {
@@ -193,7 +203,7 @@
   }
 
   .hero-image {
-    max-width: 400px;
+    max-width: 350px;
     width: 100%;
   }
 }
@@ -213,7 +223,7 @@
   }
 
   .hero-image {
-    max-width: 300px;
+    max-width: 250px;
   }
 }
 
