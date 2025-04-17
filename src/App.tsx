@@ -40,7 +40,16 @@ const preloadMainComponents = () => {
 };
 
 // Wrap with Page Transitions
-const AnimatedRoutes = () => {
+interface PrivateRouteProps {
+  children: ReactNode;
+  isAuthenticated: boolean;
+}
+
+const PrivateRoute = ({ children, isAuthenticated }: PrivateRouteProps) => {
+  return isAuthenticated ? children : <Navigate to="/admin" />;
+};
+
+const AnimatedRoutes = ({ isAuthenticated, setIsAuthenticated }: { isAuthenticated: boolean, setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>> }) => {
   const location = useLocation();
   
   return (
@@ -66,7 +75,7 @@ const AnimatedRoutes = () => {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLogin setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/admin/*" element={
-          <PrivateRoute>
+          <PrivateRoute isAuthenticated={isAuthenticated}>
             <Dashboard setIsAuthenticated={setIsAuthenticated} />
           </PrivateRoute>
         } />
@@ -74,10 +83,6 @@ const AnimatedRoutes = () => {
     </AnimatePresence>
   );
 };
-
-interface PrivateRouteProps {
-  children: ReactNode;
-}
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('userToken'));
@@ -111,10 +116,6 @@ function App() {
     };
   }, []);
 
-  const PrivateRoute = ({ children }: PrivateRouteProps) => {
-    return isAuthenticated ? children : <Navigate to="/admin" />;
-  };
-
   return (
     <ThemeProvider>
       <Router>
@@ -131,7 +132,7 @@ function App() {
           </div>
           <Navbar />
           <Suspense fallback={<LoadingScreen />}>
-            <AnimatedRoutes />
+            <AnimatedRoutes isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />
           </Suspense>
         </div>
       </Router>

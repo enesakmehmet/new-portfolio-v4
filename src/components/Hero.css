@@ -7,6 +7,7 @@
   position: relative;
   overflow: hidden;
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+  backdrop-filter: blur(10px);
 }
 
 /* Background Animation */
@@ -18,9 +19,22 @@
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(var(--primary-rgb), 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(var(--secondary-rgb), 0.1) 0%, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(var(--primary-rgb), 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 80%, rgba(var(--secondary-rgb), 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 40% 60%, rgba(var(--accent-rgb, 255, 78, 205), 0.1) 0%, transparent 50%);
   z-index: 0;
+  animation: pulse 15s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+    background-position: 0% 0%, 100% 100%, 40% 60%;
+  }
+  100% {
+    opacity: 1;
+    background-position: 5% 5%, 95% 95%, 45% 65%;
+  }
 }
 
 .hero-bg-animation {
@@ -40,19 +54,26 @@
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.1;
   margin-bottom: 1.5rem;
   color: var(--text-primary);
+  letter-spacing: -0.02em;
 }
 
 .gradient-title {
-  background: linear-gradient(90deg, #ff4ecd 30%, #007bff 70%);
+  background: linear-gradient(90deg, #ff4ecd 20%, #007bff 60%, #00e0ff 90%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
+  animation: gradient-shift 8s ease infinite alternate;
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% center; }
+  100% { background-position: 100% center; }
 }
 
 .highlight {
@@ -63,11 +84,17 @@
 
 .gradient-highlight {
   background: linear-gradient(90deg, #ff4ecd 0%, #00e0ff 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
   position: relative;
+  animation: shimmer 3s ease-in-out infinite alternate;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; filter: drop-shadow(0 0 8px rgba(255, 78, 205, 0.5)); }
+  100% { background-position: 100% center; filter: drop-shadow(0 0 8px rgba(0, 224, 255, 0.5)); }
 }
 
 .highlight::after {
@@ -121,9 +148,30 @@
   background: linear-gradient(90deg, #ff4ecd 0%, #007bff 100%);
   color: #fff;
   box-shadow: 0 4px 24px #ff4ecd30;
-  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-position 0.5s ease;
   text-decoration: none;
   display: inline-block;
+  position: relative;
+  background-size: 200% auto;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.cta-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
+}
+
+.cta-btn:hover::before {
+  transform: translateX(0);
 }
 
 .cta-btn.primary {
@@ -135,9 +183,9 @@
 }
 
 .cta-btn:hover {
-  transform: scale(1.07) translateY(-2px);
-  box-shadow: 0 8px 32px #ff4ecd60;
-  background: linear-gradient(90deg, #ff4ecd 20%, #00e0ff 80%);
+  transform: scale(1.05) translateY(-3px);
+  box-shadow: 0 10px 35px rgba(255, 78, 205, 0.4);
+  background-position: right center;
 }
 
 .hero-image {
@@ -176,21 +224,29 @@
 .hero-photo-container {
   margin-top: 2.5rem;
   border-radius: 50%;
-  box-shadow: 0 4px 32px #ff4ecd40;
+  box-shadow: 0 4px 32px rgba(255, 78, 205, 0.3);
   overflow: hidden;
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #ff4ecd 0%, #007bff 100%);
   position: relative;
-  transition: box-shadow 0.3s, transform 0.3s;
+  transition: box-shadow 0.5s ease, transform 0.5s ease;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  animation: borderPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes borderPulse {
+  0% { border-color: rgba(255, 78, 205, 0.3); }
+  50% { border-color: rgba(0, 123, 255, 0.3); }
+  100% { border-color: rgba(0, 224, 255, 0.3); }
 }
 
 .hero-photo-container:hover {
-  box-shadow: 0 8px 48px #ff4ecd80, 0 0 0 8px #fff2;
-  transform: scale(1.04) rotate(-3deg);
+  box-shadow: 0 15px 55px rgba(255, 78, 205, 0.5), 0 0 0 8px rgba(255, 255, 255, 0.2);
+  transform: scale(1.06) rotate(-3deg);
 }
 
 .hero-photo {
