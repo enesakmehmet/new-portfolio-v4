@@ -1,0 +1,291 @@
+.navbar.gradient-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.9) 60%, rgba(243, 232, 255, 0.9) 100%);
+  border-bottom: 2px solid rgba(255, 78, 205, 0.2);
+  box-shadow: 0 4px 20px rgba(255, 78, 205, 0.15);
+  backdrop-filter: blur(12px);
+  z-index: 1000;
+  transition: all var(--transition-speed) ease;
+}
+
+.dark .navbar.gradient-navbar {
+  background: linear-gradient(90deg, rgba(42, 34, 58, 0.85) 60%, rgba(28, 27, 47, 0.85) 100%);
+  border-bottom: 2px solid rgba(0, 224, 255, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 123, 255, 0.2);
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-logo.gradient-logo {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  font-weight: 900;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #ff4ecd 0%, #007bff 60%, #00e0ff 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: all 0.5s ease;
+  animation: gradient-shift 8s ease infinite alternate;
+}
+
+.nav-logo.gradient-logo:hover {
+  text-shadow: 0 2px 16px rgba(255, 78, 205, 0.6);
+  transform: scale(1.07) translateY(-2px);
+  filter: brightness(1.2);
+}
+
+.nav-menu {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: color 0.3s, background 0.3s, box-shadow 0.3s;
+  position: relative;
+}
+
+.nav-link.active {
+  color: #ff4ecd;
+  font-weight: 700;
+  background: linear-gradient(90deg, rgba(255, 78, 205, 0.15) 0%, rgba(0, 224, 255, 0.15) 100%);
+  box-shadow: 0 4px 12px rgba(255, 78, 205, 0.2);
+  transform: translateY(-2px);
+}
+
+.nav-link.active::after {
+  width: 80%;
+  background: linear-gradient(90deg, #ff4ecd 0%, #00e0ff 100%);
+  height: 3px;
+  border-radius: 2px;
+  left: 10%;
+  box-shadow: 0 2px 8px rgba(255, 78, 205, 0.4);
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 2px 8px rgba(255, 78, 205, 0.2); }
+  100% { box-shadow: 0 2px 12px rgba(0, 224, 255, 0.4); }
+}
+
+.nav-link:hover {
+  color: #ff4ecd;
+  background: linear-gradient(90deg, #ff4ecd10 0%, #00e0ff10 100%);
+  box-shadow: 0 2px 10px #ff4ecd10;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff4ecd 0%, #00e0ff 100%);
+  transition: width 0.3s, background 0.3s;
+  transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+  width: 80%;
+}
+
+.admin-button.gradient-btn {
+  color: white;
+  background: linear-gradient(90deg, #ff4ecd 0%, #007bff 100%);
+  background-size: 200% auto;
+  text-decoration: none;
+  font-weight: 700;
+  padding: 0.5rem 1.2rem;
+  border-radius: 8px;
+  transition: all 0.4s ease;
+  box-shadow: 0 4px 12px rgba(255, 78, 205, 0.3);
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.admin-button.gradient-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3));
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
+}
+
+.admin-button.gradient-btn:hover {
+  background-position: right center;
+  box-shadow: 0 8px 24px rgba(255, 78, 205, 0.5);
+  transform: scale(1.05) translateY(-2px);
+}
+
+.admin-button.gradient-btn:hover::before {
+  transform: translateX(0);
+}
+
+.theme-toggle-btn {
+  background: linear-gradient(90deg, #ff4ecd 0%, #007bff 100%);
+  background-size: 200% auto;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-left: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(255, 78, 205, 0.3);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-toggle-btn:hover {
+  background-position: right center;
+  box-shadow: 0 8px 28px rgba(255, 78, 205, 0.5);
+  transform: scale(1.13) rotate(-15deg);
+}
+
+.theme-toggle-btn::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  top: -50%;
+  left: -50%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.theme-toggle-btn:hover::after {
+  opacity: 0.3;
+}
+
+.hamburger {
+  display: none;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: background-color var(--transition-speed) ease;
+}
+
+.hamburger.active .bar {
+  background: linear-gradient(90deg, #ff4ecd 0%, #007bff 100%);
+  box-shadow: 0 0 8px rgba(255, 78, 205, 0.5);
+}
+
+.hamburger .bar {
+  display: block;
+  width: 25px;
+  height: 3px;
+  margin: 5px auto;
+  transition: all var(--transition-speed) ease;
+  background-color: #ff4ecd;
+  border-radius: 3px;
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    padding: 0.8rem 1rem;
+  }
+
+  .hamburger {
+    display: block;
+    z-index: 100;
+  }
+
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.active .bar:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .hamburger.active .bar:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
+
+  .nav-menu {
+    position: fixed;
+    left: -100%;
+    top: 70px;
+    gap: 0;
+    flex-direction: column;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 70%, rgba(255, 78, 205, 0.1) 100%);
+    backdrop-filter: blur(15px);
+    width: 100%;
+    height: calc(100vh - 70px);
+    text-align: center;
+    transition: 0.4s ease-in-out;
+    box-shadow: 0 8px 30px rgba(255, 78, 205, 0.15);
+    padding: 2rem 0;
+  }
+
+  .dark .nav-menu {
+    background: linear-gradient(135deg, #2a223a 70%, #00e0ff10 100%);
+    box-shadow: 0 6px 24px #00e0ff10;
+  }
+
+  .nav-menu.active {
+    left: 0;
+  }
+
+  .nav-link {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    display: block;
+    width: 80%;
+    margin: 0.5rem auto;
+  }
+
+  .nav-link:hover {
+    transform: translateY(-2px);
+  }
+  
+  .admin-button {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+    display: block;
+    width: 80%;
+    margin: 1.5rem auto 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav-logo {
+    font-size: 1.2rem;
+  }
+
+  .nav-menu {
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+}

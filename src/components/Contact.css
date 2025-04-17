@@ -1,0 +1,209 @@
+.contact-section {
+  padding: 80px 0;
+  background-color: #ffffff;
+}
+
+.contact-section h2 {
+  text-align: center;
+  margin-bottom: 50px;
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 50px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.info-item {
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.info-item i {
+  font-size: 2rem;
+  color: #007bff;
+  margin-bottom: 15px;
+}
+
+.info-item h3 {
+  margin: 10px 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.info-item p {
+  color: #666;
+  margin: 0;
+}
+
+.contact-form {
+  background-color: #f8f9fa;
+  padding: 30px;
+  border-radius: 10px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  height: 150px;
+  resize: vertical;
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 12px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.contact-title.gradient-title {
+  background: linear-gradient(90deg, #ff4ecd 20%, #007bff 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+  font-size: 2.7rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 3rem;
+  text-align: center;
+  animation: fadeInTitle 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes fadeInTitle {
+  0% { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.gradient-card {
+  background: linear-gradient(135deg, #fff 60%, #f3e8ff 100%);
+  box-shadow: 0 4px 32px #ff4ecd10, 0 1.5px 6px #007bff10;
+  border: 2px solid rgba(255, 78, 205, 0.07);
+  transition: box-shadow 0.3s, transform 0.3s, background 0.3s;
+}
+
+.dark .gradient-card {
+  background: linear-gradient(135deg, #2a223a 60%, #1c1b2f 100%);
+  border: 2px solid rgba(0,224,255,0.07);
+  box-shadow: 0 4px 32px #007bff20, 0 1.5px 6px #ff4ecd20;
+}
+
+.info-icon.gradient-bg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4ecd 0%, #007bff 100%);
+  color: #fff;
+  font-size: 2rem;
+  margin: 0 auto 1rem auto;
+  box-shadow: 0 2px 12px #ff4ecd30;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.info-item:hover .info-icon.gradient-bg {
+  background: linear-gradient(135deg, #ff4ecd 30%, #00e0ff 100%);
+  box-shadow: 0 6px 24px #ff4ecd80;
+}
+
+.gradient-input {
+  border: 2px solid transparent;
+  background: #fff;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 1rem;
+  transition: border 0.3s, box-shadow 0.3s;
+  box-shadow: 0 2px 8px #ff4ecd10;
+}
+
+.gradient-input:focus {
+  outline: none;
+  border-image: linear-gradient(90deg, #ff4ecd 0%, #007bff 100%) 1;
+  box-shadow: 0 4px 16px #ff4ecd30;
+}
+
+.contact-btn.gradient-btn {
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 2rem;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff4ecd 0%, #007bff 100%);
+  color: #fff;
+  box-shadow: 0 4px 24px #ff4ecd30;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+.contact-btn.gradient-btn:hover {
+  transform: scale(1.07) translateY(-2px);
+  box-shadow: 0 8px 32px #ff4ecd60;
+  background: linear-gradient(90deg, #ff4ecd 20%, #00e0ff 80%);
+}
+
+@media (max-width: 768px) {
+  .contact-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .contact-info {
+    order: 2;
+  }
+  
+  .contact-form {
+    order: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .contact-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
