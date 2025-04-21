@@ -137,3 +137,5 @@ Projenizde GIF ve video kullanımını test etmek için:
   mediaSrc: "/videos/examples/example.mp4"
 }
 ```
+
+// Yeni updateler eklendi 
