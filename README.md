@@ -138,4 +138,4 @@ Projenizde GIF ve video kullanımını test etmek için:
 }
 ```
 
-// Yeni updateler eklendi 
+
