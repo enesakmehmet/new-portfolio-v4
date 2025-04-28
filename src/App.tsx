@@ -1,4 +1,4 @@
-import { Suspense, lazy, useState, ReactNode, useEffect } from 'react'
+import { Suspense, lazy, useState, ReactNode, useEffect, useMemo, useCallback } from 'react'
 import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion';
 import './App.css'
@@ -6,37 +6,55 @@ import './styles/themes.css'
 import Navbar from './components/Navbar'
 import LoadingScreen from './components/LoadingScreen'
 import BackgroundAnimation from './components/BackgroundAnimation'
-import ParticleCanvas from './components/animations/ParticleCanvas'
 import { ThemeProvider } from './context/ThemeContext'
 import ThemeToggle from './components/animations/ThemeToggle'
 
+// Dinamik import ile lazy loading optimizasyonu
+// ChunkLoadError'u önlemek için retry mekanizması ekleyelim
+const lazyWithRetry = (componentImport: () => Promise<any>) => {
+  return lazy(() => {
+    const retry = () => componentImport().catch(retry);
+    return retry();
+  });
+};
+
 // Pre-load Hero component for faster initial load
-const Hero = lazy(() => 
+const Hero = lazyWithRetry(() => 
   import('./components/Hero').then(module => ({
     default: module.default
   }))
 );
 
 // Lazily load other components
-const About = lazy(() => import('./components/About'));
-const Skills = lazy(() => import('./components/Skills'));
-const Projects = lazy(() => import('./components/Projects'));
-const Contact = lazy(() => import('./components/Contact'));
-const ProjectDetails = lazy(() => import('./components/ProjectDetails'));
-const AdminLogin = lazy(() => import('./components/admin/AdminLogin'));
-const Dashboard = lazy(() => import('./components/admin/Dashboard'));
+const About = lazyWithRetry(() => import('./components/About'));
+const Skills = lazyWithRetry(() => import('./components/Skills'));
+const Projects = lazyWithRetry(() => import('./components/Projects'));
+const Contact = lazyWithRetry(() => import('./components/Contact'));
+const ProjectDetails = lazyWithRetry(() => import('./components/ProjectDetails'));
+const AdminLogin = lazyWithRetry(() => import('./components/admin/AdminLogin'));
+const Dashboard = lazyWithRetry(() => import('./components/admin/Dashboard'));
+// Lazy load ParticleCanvas to improve initial load
+const ParticleCanvas = lazyWithRetry(() => import('./components/animations/ParticleCanvas'));
 
-// Preload main route components after initial load
+// Preload main route components after initial load - route bazlı preloading
 const preloadMainComponents = () => {
+  // IntersectionObserver API kullanarak görünürlüğe göre preload yapalım
+  // ya da requestIdleCallback ile tarayıcı boşta iken yükleyelim
+  const preloadWithIdle = (importFn: () => Promise<any>) => {
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(() => importFn());
+    } else {
+      setTimeout(importFn, 2000);
+    }
+  };
+
   const componentsToPreload = [
-    import('./components/About'),
-    import('./components/Skills'),
-    import('./components/Projects')
+    () => import('./components/About'),
+    () => import('./components/Skills'),
+    () => import('./components/Projects')
   ];
 
-  Promise.all(componentsToPreload).catch(err => 
-    console.warn('Failed to preload some components:', err)
-  );
+  componentsToPreload.forEach(preloadWithIdle);
 };
 
 // Wrap with Page Transitions
@@ -85,8 +103,14 @@ const AnimatedRoutes = ({ isAuthenticated, setIsAuthenticated }: { isAuthenticat
 };
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(!!localStorage.getItem('userToken'));
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => !!localStorage.getItem('userToken'));
   const [showParticles, setShowParticles] = useState<boolean>(true);
+
+  // Kullanıcı arayüzü durumu güncellemelerini optimize edelim
+  const handleResize = useCallback(() => {
+    const isMobile = window.innerWidth < 768;
+    setShowParticles(!isMobile);
+  }, []);
 
   useEffect(() => {
     // Check if we're on the main page, then preload components
@@ -100,36 +124,50 @@ function App() {
     }
     
     // Disable particles on mobile devices for better performance
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setShowParticles(false);
-      } else {
-        setShowParticles(true);
+    handleResize();
+    
+    // Resize olayını throttle edelim
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    const throttledResize = () => {
+      if (!resizeTimer) {
+        resizeTimer = setTimeout(() => {
+          resizeTimer = null as any;
+          handleResize();
+        }, 250);
       }
     };
     
-    handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', throttledResize);
     
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('resize', throttledResize);
+      clearTimeout(resizeTimer);
     };
-  }, []);
+  }, [handleResize]);
+
+  // Memo kullanarak komponentin gereksiz yeniden render edilmesini önleyelim
+  const themeToggle = useMemo(() => (
+    <div className="theme-toggle-wrapper" style={{ 
+      position: 'fixed', 
+      top: '80px', 
+      right: '20px', 
+      zIndex: 1000 
+    }}>
+      <ThemeToggle />
+    </div>
+  ), []);
 
   return (
     <ThemeProvider>
       <Router>
         <div className="app">
           <BackgroundAnimation />
-          {showParticles && <ParticleCanvas />}
-          <div className="theme-toggle-wrapper" style={{ 
-            position: 'fixed', 
-            top: '80px', 
-            right: '20px', 
-            zIndex: 1000 
-          }}>
-            <ThemeToggle />
-          </div>
+          {showParticles && (
+            <Suspense fallback={null}>
+              <ParticleCanvas />
+            </Suspense>
+          )}
+          {themeToggle}
           <Navbar />
           <Suspense fallback={<LoadingScreen />}>
             <AnimatedRoutes isAuthenticated={isAuthenticated} setIsAuthenticated={setIsAuthenticated} />

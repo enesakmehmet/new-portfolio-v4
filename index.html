@@ -2,21 +2,105 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="/new-portfolio-v4/icons/icon.svg"
-    />
+    <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="manifest" href="/new-portfolio-v4/manifest.json" />
-    <title>Portfolio</title>
+    <meta name="description" content="Enes - Kişisel Portfolyo Web Sitesi" />
+    <meta name="theme-color" content="#ffffff" />
+
+    <!-- Preload kritik önbellek için -->
+    <link rel="preload" href="/src/index.css" as="style" />
+    <link rel="preload" href="/src/App.css" as="style" />
+
+    <!-- Preconnect'ler network optimizasyonu için -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Kritik render yolunda kullanılan fontlar -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="font"
+      href="/fonts/main-font.woff2"
+      type="font/woff2"
+      crossorigin
+      data-font-family="MainFont"
     />
+
+    <!-- İnline kritik CSS -->
+    <style>
+      /* Temel kritik CSS buraya - sayfa şekillendirilmesi için minimum CSS */
+      :root {
+        --bg-color: #fff;
+        --text-color: #333;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+      }
+
+      .loading-screen {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-color: var(--bg-color);
+      }
+    </style>
+
+    <title>Enes - Portfolio</title>
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="./src/main.tsx"></script>
+    <div id="root">
+      <!-- Kritik ilk render için yüklenme işareti -->
+      <div class="loading-screen">
+        <div>Yükleniyor...</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Performance monitoring for web vitals -->
+    <script>
+      // Web vitals metrikleri için yardımcı fonksiyon
+      const reportWebVitals = () => {
+        if (window.performance && "getEntriesByType" in performance) {
+          // Sayfa yüklendikten sonra metrikleri topla
+          window.addEventListener("load", () => {
+            setTimeout(() => {
+              const navigationEntries =
+                performance.getEntriesByType("navigation");
+              const paintEntries = performance.getEntriesByType("paint");
+
+              if (navigationEntries.length > 0) {
+                const nav = navigationEntries[0];
+                console.log(
+                  "DOM Content Loaded:",
+                  nav.domContentLoadedEventEnd - nav.startTime,
+                  "ms"
+                );
+                console.log(
+                  "Load Event:",
+                  nav.loadEventEnd - nav.startTime,
+                  "ms"
+                );
+              }
+
+              if (paintEntries.length > 0) {
+                paintEntries.forEach((paint) => {
+                  console.log(`${paint.name}:`, paint.startTime, "ms");
+                });
+              }
+            }, 0);
+          });
+        }
+      };
+
+      // Geliştirme ortamında metrikleri topla
+      if (process.env.NODE_ENV !== "production") {
+        reportWebVitals();
+      }
+    </script>
   </body>
 </html>

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect, useCallback, memo } from 'react';
 import { ThemeContext } from '../context/ThemeContext';
 
 interface Circle {
@@ -21,14 +21,12 @@ const BackgroundAnimation = () => {
   const [circles, setCircles] = useState<Circle[]>([]);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 
-  useEffect(() => {
-    // Get window size safely on client side
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    setWindowSize({ width, height });
-
-    // Generate circles data
-    const circlesData = Array.from({ length: 10 }).map((_, i) => {
+  // Memorize circle generation to prevent unnecessary recalculations
+  const generateCircles = useCallback((width: number, height: number, currentTheme: string) => {
+    // Daha az sayıda daire oluşturalım
+    const numberOfCircles = Math.min(8, Math.max(3, Math.floor(width * height / 400000)));
+    
+    return Array.from({ length: numberOfCircles }).map((_, i) => {
       // Daha büyük boyutlar
       const size = Math.random() * 250 + 150;
       
@@ -61,26 +59,45 @@ const BackgroundAnimation = () => {
         ],
         // Daha uzun süreli, daha yavaş animasyon
         duration: Math.random() * 90 + 70,
-        background: theme === 'dark' 
+        background: currentTheme === 'dark' 
           ? `rgba(255, 255, 255, ${Math.random() * 0.1 + 0.03})`
           : `rgba(0, 0, 0, ${Math.random() * 0.1 + 0.03})`,
         size: size,
       };
     });
-    
+  }, []);
+
+  useEffect(() => {
+    // Get window size safely on client side
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    setWindowSize({ width, height });
+
+    // Generate circles data
+    const circlesData = generateCircles(width, height, theme);
     setCircles(circlesData);
 
-    // Handle window resize
+    // Handle window resize with debounce
+    let resizeTimer: ReturnType<typeof setTimeout>;
     const handleResize = () => {
-      setWindowSize({
-        width: window.innerWidth,
-        height: window.innerHeight
-      });
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+        setWindowSize({
+          width: newWidth,
+          height: newHeight
+        });
+        setCircles(generateCircles(newWidth, newHeight, theme));
+      }, 250); // Debounce 250ms
     };
 
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [theme]);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(resizeTimer);
+    };
+  }, [theme, generateCircles]);
 
   if (windowSize.width === 0) return null; // Don't render until we have window size
 
@@ -114,6 +131,7 @@ const BackgroundAnimation = () => {
             filter: 'blur(50px)', // Daha bulanık ve yumuşak
             width: `${circle.size}px`,
             height: `${circle.size}px`,
+            willChange: 'transform, opacity', // GPU acceleration için
           }}
         />
       ))}
@@ -121,4 +139,5 @@ const BackgroundAnimation = () => {
   );
 };
 
-export default BackgroundAnimation; 
+// Memo kullanarak gereksiz render'ları önleyelim
+export default memo(BackgroundAnimation); 

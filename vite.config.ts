@@ -14,8 +14,18 @@ export default defineConfig({
       babel: {
         plugins: [
           ['@babel/plugin-transform-react-jsx', { runtime: 'automatic' }]
+        ],
+        presets: [
+          ['@babel/preset-env', {
+            targets: { browsers: ['>0.25%', 'not ie 11', 'not op_mini all'] },
+            modules: false,
+            loose: true,
+            bugfixes: true
+          }]
         ]
-      }
+      },
+      jsxRuntime: 'automatic',
+      fastRefresh: true
     }),
     VitePWA({
       registerType: 'autoUpdate',
@@ -106,7 +116,10 @@ export default defineConfig({
               networkTimeoutSeconds: 10
             }
           }
-        ]
+        ],
+        inlineWorkboxRuntime: true,
+        skipWaiting: true,
+        clientsClaim: true
       }
     })
   ],
@@ -119,6 +132,7 @@ export default defineConfig({
         manualChunks: (id) => {
           if (id.includes('node_modules/react/') || 
               id.includes('node_modules/react-dom/') || 
+              id.includes('node_modules/scheduler/') ||
               id.includes('node_modules/react-router-dom/')) {
             return 'react-vendor';
           }
@@ -136,10 +150,33 @@ export default defineConfig({
             return 'icons';
           }
           
-          if (id.includes('node_modules/') && !id.includes('node_modules/.pnpm/')) {
+          if (id.includes('node_modules/axios') || 
+              id.includes('node_modules/express') ||
+              id.includes('node_modules/mongoose')) {
+            return 'api-vendor';
+          }
+          
+          if (id.includes('node_modules/')) {
             return 'vendor';
           }
-        }
+          
+          if (id.includes('/src/components/')) {
+            if (id.includes('/animations/')) {
+              return 'components-animations';
+            }
+            if (id.includes('/admin/')) {
+              return 'components-admin';
+            }
+            return 'components-main';
+          }
+          
+          if (id.includes('/src/utils/') || id.includes('/src/hooks/')) {
+            return 'utils';
+          }
+        },
+        chunkFileNames: 'assets/js/[name]-[hash].js',
+        entryFileNames: 'assets/js/[name]-[hash].js',
+        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]',
       }
     },
     chunkSizeWarningLimit: 1000,
@@ -148,11 +185,25 @@ export default defineConfig({
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
-      }
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.info', 'console.debug', 'console.trace'],
+        passes: 2,
+        ecma: 2020
+      },
+      format: {
+        comments: false
+      },
+      ecma: 2020,
+      safari10: false
     },
     sourcemap: false,
-    target: 'esnext'
+    target: 'esnext',
+    assetsInlineLimit: 4096,
+    modulePreload: true,
+    outDir: 'dist',
+    emptyOutDir: true,
+    reportCompressedSize: false,
+    cssMinify: true
   },
   server: {
     open: true,
@@ -165,10 +216,29 @@ export default defineConfig({
     }
   },
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion']
+    include: [
+      'react', 
+      'react-dom', 
+      'react-router-dom', 
+      'framer-motion',
+      '@mui/material',
+      '@emotion/react',
+      '@emotion/styled'
+    ],
+    esbuildOptions: {
+      target: 'esnext',
+      supported: { bigint: true }
+    }
+  },
+  esbuild: {
+    legalComments: 'none',
+    target: 'esnext'
   },
   preview: {
     port: 5000,
     open: true
+  },
+  json: {
+    stringify: true
   }
 })
