@@ -1,5 +1,5 @@
 import { Suspense, lazy, useState, ReactNode, useEffect, useMemo, useCallback } from 'react'
-import { HashRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion';
 import './App.css'
 import './styles/themes.css'
