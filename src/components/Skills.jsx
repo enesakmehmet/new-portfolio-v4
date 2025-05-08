@@ -1,12 +1,11 @@
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useState, useEffect, useRef } from 'react'
 import './Skills.css'
-import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaVuejs, FaGitAlt, FaNodeJs, FaSass, FaGithub } from 'react-icons/fa'
+import { FaHtml5, FaCss3Alt, FaJs, FaReact, FaVuejs, FaGitAlt, FaNodeJs, FaSass, FaGithub, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
 import { SiTypescript, SiAdobexd, SiFigma, SiPostman, SiReacthookform, SiExpress, SiPassport, SiPostgresql, SiPrisma, SiNestjs } from 'react-icons/si'
 import { MdDevices, MdStorage } from 'react-icons/md'
 import { BsBrushFill } from 'react-icons/bs'
 import { TbBrandReactNative } from 'react-icons/tb'
-import React from 'react'
 
 // Floating element decoration
 const FloatingElement = ({ delay = 0, size = 30, color = "#fff", top, left, opacity = 0.2 }) => {
@@ -17,20 +16,21 @@ const FloatingElement = ({ delay = 0, size = 30, color = "#fff", top, left, opac
         position: 'absolute',
         width: size,
         height: size,
-        backgroundColor: color,
+        background: `radial-gradient(circle at center, ${color}, transparent)`,
         borderRadius: '50%',
         top: top,
         left: left,
-        filter: 'blur(8px)',
-        opacity: opacity
+        filter: 'blur(15px)',
+        opacity: opacity,
+        zIndex: 0
       }}
       animate={{
-        y: [0, -15, 0, 15, 0],
-        x: [0, 10, 0, -10, 0],
-        scale: [1, 1.05, 1, 0.95, 1],
+        y: [0, -20, 0, 20, 0],
+        x: [0, 15, 0, -15, 0],
+        scale: [1, 1.1, 1, 0.9, 1],
       }}
       transition={{
-        duration: 15,
+        duration: 20,
         repeat: Infinity,
         repeatType: 'loop',
         ease: 'easeInOut',
@@ -44,12 +44,14 @@ const FloatingElement = ({ delay = 0, size = 30, color = "#fff", top, left, opac
 const BackgroundDecoration = () => {
   return (
     <div className="skills-bg-decoration">
-      <FloatingElement size={100} top="10%" left="5%" color="rgba(var(--frontend-color-rgb), 0.2)" delay={0} />
-      <FloatingElement size={60} top="25%" left="15%" color="rgba(var(--design-color-rgb), 0.2)" delay={2} />
-      <FloatingElement size={80} top="60%" left="8%" color="rgba(var(--backend-color-rgb), 0.2)" delay={4} />
-      <FloatingElement size={120} top="15%" left="85%" color="rgba(var(--frontend-color-rgb), 0.2)" delay={1} />
-      <FloatingElement size={70} top="50%" left="90%" color="rgba(var(--design-color-rgb), 0.2)" delay={3} />
-      <FloatingElement size={90} top="75%" left="80%" color="rgba(var(--backend-color-rgb), 0.2)" delay={5} />
+      <FloatingElement size={150} top="5%" left="5%" color="rgba(var(--frontend-color-rgb), 0.15)" delay={0} />
+      <FloatingElement size={100} top="20%" left="15%" color="rgba(var(--design-color-rgb), 0.12)" delay={2} />
+      <FloatingElement size={120} top="60%" left="8%" color="rgba(var(--backend-color-rgb), 0.15)" delay={4} />
+      <FloatingElement size={180} top="10%" left="85%" color="rgba(var(--frontend-color-rgb), 0.12)" delay={1} />
+      <FloatingElement size={130} top="45%" left="90%" color="rgba(var(--design-color-rgb), 0.15)" delay={3} />
+      <FloatingElement size={160} top="75%" left="80%" color="rgba(var(--backend-color-rgb), 0.12)" delay={5} />
+      <FloatingElement size={140} top="35%" left="50%" color="rgba(var(--primary-rgb), 0.1)" delay={6} />
+      <FloatingElement size={120} top="85%" left="40%" color="rgba(var(--secondary-rgb), 0.1)" delay={7} />
     </div>
   );
 }
@@ -88,9 +90,8 @@ const Skills = () => {
   const [activeCategory, setActiveCategory] = useState("Frontend");
   const [skills, setSkills] = useState([]);
   const skillsContainerRef = useRef(null);
-  const [isHovering, setIsHovering] = useState(false);
-  const [hoverPosition, setHoverPosition] = useState({ x: 0, y: 0 });
-  const [activeSkill, setActiveSkill] = useState(null);
+  const skillsListRef = useRef(null);
+  const [isAutoScrolling, setIsAutoScrolling] = useState(true);
 
   useEffect(() => {
     const savedSkills = localStorage.getItem('skillCategories');
@@ -170,51 +171,48 @@ const Skills = () => {
     return skills.find(group => group.category === activeCategory) || { items: [] };
   }
 
-  const handleMouseMove = (e) => {
-    if (skillsContainerRef.current) {
-      const bounds = skillsContainerRef.current.getBoundingClientRect();
-      const x = (e.clientX - bounds.left) / bounds.width;
-      const y = (e.clientY - bounds.top) / bounds.height;
-      setHoverPosition({ x, y });
+
+  
+  const handleScroll = (direction) => {
+    if (skillsListRef.current) {
+      const scrollAmount = 300; // Adjust based on card width
+      const currentScroll = skillsListRef.current.scrollLeft;
+      
+      skillsListRef.current.scrollTo({
+        left: direction === 'left' ? currentScroll - scrollAmount : currentScroll + scrollAmount,
+        behavior: 'smooth'
+      });
+      
+      // Temporarily disable auto-scrolling when manually scrolling
+      setIsAutoScrolling(false);
+      setTimeout(() => setIsAutoScrolling(true), 5000); // Re-enable after 5 seconds
     }
   };
 
-  const getCategoryGradient = (category) => {
-    switch(category) {
-      case "Frontend": return "linear-gradient(135deg, rgba(var(--frontend-color-rgb), 0.95), rgba(var(--primary-rgb), 0.95))";
-      case "UI/UX Tasarım": return "linear-gradient(135deg, rgba(var(--design-color-rgb), 0.95), rgba(156, 136, 255, 0.95))";
-      case "Backend": return "linear-gradient(135deg, rgba(var(--backend-color-rgb), 0.95), rgba(49, 151, 149, 0.95))";
-      default: return "linear-gradient(135deg, rgba(var(--primary-rgb), 0.95), rgba(var(--secondary-rgb), 0.95))";
-    }
-  };
 
-  const getCategoryColor = (category) => {
-    switch (category) {
-      case "Frontend": return "var(--frontend-color)";
-      case "UI/UX Tasarım": return "var(--design-color)";
-      case "Backend": return "var(--backend-color)";
-      default: return "var(--primary-color)";
-    }
-  };
 
   return (
-    <section id="skills" 
+    <motion.section
+      id="skills"
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, ease: 'easeOut' }}
       className="skills-section" 
       ref={skillsContainerRef}
-      onMouseMove={handleMouseMove}
       data-active-category={activeCategory}
     >
       <BackgroundDecoration />
       
       <motion.div 
         className="skills-header"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.8 }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
       >
-        <h2 className="skills-title gradient-title">Yeteneklerim</h2>
-        <p className="skills-subtitle">Modern web teknolojileri, arayüz ve backend geliştirme konularında uzmanım.</p>
+        <h2 className="skills-title">Yeteneklerim</h2>
+        <p className="skills-description">
+          Modern web teknolojileri ve araçları kullanarak yaratıcı çözümler üretiyorum.
+        </p>
       </motion.div>
       
       <div className="skills-container">
@@ -243,16 +241,21 @@ const Skills = () => {
         </div>
         
         <motion.div 
-          className="skills-list-container"
+          className="skill-list-container"
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8, delay: 0.2 }}
+          onMouseEnter={() => setIsAutoScrolling(false)}
+          onMouseLeave={() => setIsAutoScrolling(true)}
         >
-          <div className="skills-list">
+          <div 
+            className={`skill-list ${isAutoScrolling ? 'auto-scrolling' : ''}`} 
+            ref={skillsListRef}
+          >
             {getActiveSkillGroup().items.map((skill, idx) => (
               <motion.div
-                className="skill-card gradient-card"
+                className="skill-card"
                 key={skill.name}
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
@@ -260,14 +263,43 @@ const Skills = () => {
                 transition={{ delay: idx * 0.07, duration: 0.6, type: 'spring' }}
                 whileHover={{ scale: 1.06, boxShadow: "0 6px 24px #ff4ecd90" }}
               >
-                <div className="skill-icon gradient-bg">
+                <div className="skill-icon">
                   {skill.icon}
                 </div>
                 <div className="skill-info">
                   <span className="skill-name">{skill.name}</span>
-                  <div className="skill-bar-bg">
+                  <div className="skill-bar">
                     <motion.div
-                      className="skill-bar gradient-bar"
+                      className="skill-bar-inner"
+                      initial={{ width: 0 }}
+                      animate={{ width: skill.level + '%' }}
+                      transition={{ duration: 1.2, delay: 0.2 + idx * 0.05, type: 'spring' }}
+                    />
+                  </div>
+                  <span className="skill-level-text">%{skill.level}</span>
+                </div>
+              </motion.div>
+            ))}
+            
+            {/* Duplicate cards for infinite scroll effect */}
+            {getActiveSkillGroup().items.map((skill, idx) => (
+              <motion.div
+                className="skill-card duplicate"
+                key={`duplicate-${skill.name}`}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.07, duration: 0.6, type: 'spring' }}
+                whileHover={{ scale: 1.06, boxShadow: "0 6px 24px #ff4ecd90" }}
+              >
+                <div className="skill-icon">
+                  {skill.icon}
+                </div>
+                <div className="skill-info">
+                  <span className="skill-name">{skill.name}</span>
+                  <div className="skill-bar">
+                    <motion.div
+                      className="skill-bar-inner"
                       initial={{ width: 0 }}
                       animate={{ width: skill.level + '%' }}
                       transition={{ duration: 1.2, delay: 0.2 + idx * 0.05, type: 'spring' }}
@@ -278,9 +310,16 @@ const Skills = () => {
               </motion.div>
             ))}
           </div>
+          
+          <div className="scroll-indicator scroll-left" onClick={() => handleScroll('left')}>
+            <FaChevronLeft />
+          </div>
+          <div className="scroll-indicator scroll-right" onClick={() => handleScroll('right')}>
+            <FaChevronRight />
+          </div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   );
 }
 

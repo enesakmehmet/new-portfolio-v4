@@ -84,6 +84,12 @@
   box-sizing: border-box;
 }
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
@@ -96,6 +102,11 @@ body {
   line-height: 1.5;
   transition: background-color var(--transition-speed) var(--transition-ease),
               color var(--transition-speed) var(--transition-ease);
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -122,9 +133,8 @@ img {
 
 /* Utility Classes */
 .container {
-  width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
+  width: 100vw;
+  margin: 0;
   padding: 0 var(--desktop-padding);
 }
 
@@ -133,7 +143,7 @@ img {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-fill-color: transparent;
+  color: transparent;
 }
 
 .glass-effect {
@@ -150,6 +160,20 @@ img {
   
   html {
     font-size: 14px;
+  }
+  
+  .container {
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+  
+  .container {
+    padding: 0 0.75rem;
   }
 }
 

@@ -26,35 +26,57 @@ body {
   overflow-x: hidden;
   transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
   background: var(--bg-primary);
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 .app {
   min-height: 100vh;
+  width: 100%;
   background-color: var(--bg-primary);
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
   transition: background-color var(--transition-speed) ease;
   position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 section {
   padding: var(--section-spacing) 0;
-  max-width: var(--max-width);
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   padding-inline: var(--desktop-padding);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
   background: var(--card-bg, #fff);
 }
 
 @media (max-width: 900px) {
   section {
     padding: var(--section-spacing-mobile) var(--mobile-padding);
-    box-shadow: 0 2px 8px #ff4ecd08;
+    box-shadow: none;
   }
   html {
     font-size: 15.5px;
+  }
+}
+
+@media (max-width: 600px) {
+  section {
+    padding: calc(var(--section-spacing-mobile) / 1.5) var(--mobile-padding);
+  }
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  section {
+    padding: calc(var(--section-spacing-mobile) / 2) var(--mobile-padding);
+  }
+  html {
+    font-size: 13px;
   }
 }
 
@@ -108,8 +130,7 @@ section,
 /* Container */
 .container {
   width: 100%;
-  max-width: var(--max-width);
-  margin: 0 auto;
+  margin: 0;
   padding: 0 var(--desktop-padding);
 }
 
