@@ -8,8 +8,8 @@
     <meta name="theme-color" content="#ffffff" />
 
     <!-- Preload kritik önbellek için -->
-    <link rel="preload" href="/src/index.css" as="style" />
-    <link rel="preload" href="/src/App.css" as="style" />
+    <link rel="preload" href="./src/index.css" as="style" />
+    <link rel="preload" href="./src/App.css" as="style" />
 
     <!-- Preconnect'ler network optimizasyonu için -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -19,7 +19,7 @@
     <link
       rel="preload"
       as="font"
-      href="/fonts/main-font.woff2"
+      href="./fonts/main-font.woff2"
       type="font/woff2"
       crossorigin
       data-font-family="MainFont"
@@ -59,7 +59,7 @@
         <div>Yükleniyor...</div>
       </div>
     </div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script type="module" src="./src/main.tsx"></script>
 
     <!-- Performance monitoring for web vitals -->
     <script>
@@ -98,7 +98,10 @@
       };
 
       // Geliştirme ortamında metrikleri topla
-      if (process.env.NODE_ENV !== "production") {
+      // Tarayıcıda process.env kullanılamadığı için basit bir kontrol yapıyoruz
+      const isDevelopment = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
+      if (isDevelopment) {
         reportWebVitals();
       }
     </script>
