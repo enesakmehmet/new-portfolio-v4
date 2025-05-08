@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useContext, useState, useEffect, useCallback, memo } from 'react';
-import { ThemeContext } from '../context/ThemeContext';
+import ThemeContext from '../context/ThemeContext';
 
 interface Circle {
   id: number;
@@ -17,7 +17,8 @@ interface Circle {
 }
 
 const BackgroundAnimation = () => {
-  const { theme } = useContext(ThemeContext);
+  const { darkMode } = useContext(ThemeContext);
+  const theme = darkMode ? 'dark' : 'light';
   const [circles, setCircles] = useState<Circle[]>([]);
   const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
 

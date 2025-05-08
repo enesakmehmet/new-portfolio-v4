@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState, useCallback, memo } from 'react';
 import { useContext } from 'react';
-import { ThemeContext } from '../../context/ThemeContext';
+import ThemeContext from "../../context/ThemeContext";
 
 interface Particle {
   x: number;
@@ -20,7 +20,8 @@ const ParticleCanvas: React.FC = () => {
   const particlesRef = useRef<Particle[]>([]);
   const requestIdRef = useRef<number>();
   const mouseRef = useRef({ x: 0, y: 0, radius: 100 });
-  const { theme } = useContext(ThemeContext);
+  const { darkMode } = useContext(ThemeContext);
+  const theme = darkMode ? 'dark' : 'light';
   
   // Daha verimli parçacık oluşturma için memorize
   const initParticles = useCallback((canvas: HTMLCanvasElement, currentTheme: string) => {

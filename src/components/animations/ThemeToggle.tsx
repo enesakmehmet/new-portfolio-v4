@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { motion } from 'framer-motion';
-import { ThemeContext } from '../../context/ThemeContext';
+import ThemeContext from '../../context/ThemeContext';
 
 interface ThemeToggleProps {
   className?: string;
@@ -11,7 +11,8 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
   className = '',
   size = 24
 }) => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
+  const { darkMode, toggleTheme } = useContext(ThemeContext);
+  const theme = darkMode ? 'dark' : 'light';
   const isDark = theme === 'dark';
 
   // Sun/moon variants

@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useContext } from 'react';
-import { ThemeContext } from '../../context/ThemeContext';
+import ThemeContext from '../../context/ThemeContext';
 import { OrbitControls, PerspectiveCamera, Text } from '@react-three/drei';
 import * as THREE from 'three';
 
@@ -86,7 +86,8 @@ const FloatingText: React.FC<{ text: string, position: [number, number, number],
 
 // Main scene
 const Scene: React.FC = () => {
-  const { theme } = useContext(ThemeContext);
+  const { darkMode } = useContext(ThemeContext);
+  const theme = darkMode ? 'dark' : 'light';
   const { camera } = useThree();
   
   // Adjust camera on mount
@@ -131,7 +132,8 @@ const Scene: React.FC = () => {
 
 // Main component
 const ThreeJsScene: React.FC = () => {
-  const { theme } = useContext(ThemeContext);
+  const { darkMode } = useContext(ThemeContext);
+  const theme = darkMode ? 'dark' : 'light';
   
   return (
     <div className="threejs-container" style={{ 
