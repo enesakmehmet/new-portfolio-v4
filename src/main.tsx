@@ -8,7 +8,7 @@ const App = React.lazy(() => import('./App'));
 
 // Kritik olmayan stilleri asenkron olarak yükleyelim
 const loadNonCriticalStyles = () => {
-  const nonCriticalStyles = [
+  const nonCriticalStyles: string[] = [
     // Burada yüklenecek stil dosyalarının listesi
     // Örneğin animasyon stilleri, ikon stilleri, vs.
   ];

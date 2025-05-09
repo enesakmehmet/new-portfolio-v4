@@ -70,7 +70,8 @@ const Projects: React.FC = () => {
   const navigate = useNavigate();
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  // Error state is used in catch blocks
+  const [, setError] = useState<string | null>(null);
   const projectsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {

@@ -22,7 +22,7 @@ const AnimatedSvg: React.FC<AnimatedSvgProps> = ({
   height = 300,
   viewBox = '0 0 100 100'
 }) => {
-  const { ref, controls, inView } = useAnimateOnScroll({
+  const { ref, controls } = useAnimateOnScroll({
     threshold: 0.1,
     triggerOnce: true
   });

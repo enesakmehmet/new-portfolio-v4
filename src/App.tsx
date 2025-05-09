@@ -13,7 +13,7 @@ import ThemeToggle from './components/animations/ThemeToggle'
 // ChunkLoadError'u önlemek için retry mekanizması ekleyelim
 const lazyWithRetry = (componentImport: () => Promise<any>) => {
   return lazy(() => {
-    const retry = () => componentImport().catch(retry);
+    const retry = (): Promise<any> => componentImport().catch(retry);
     return retry();
   });
 };

@@ -14,7 +14,7 @@ const AnimatedSkillBar: React.FC<AnimatedSkillBarProps> = ({
   color = '#6b21a8',
   delay = 0
 }) => {
-  const { ref, controls, inView } = useAnimateOnScroll({
+  const { ref, controls } = useAnimateOnScroll({
     threshold: 0.1,
     triggerOnce: true
   });

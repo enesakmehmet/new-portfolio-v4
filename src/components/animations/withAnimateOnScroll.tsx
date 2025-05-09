@@ -31,7 +31,6 @@ export function withAnimateOnScroll<P extends object>(
     threshold = 0.1,
     triggerOnce = true,
     variants = defaultVariants,
-    rootMargin,
     initial = "hidden",
     transition
   } = options;
