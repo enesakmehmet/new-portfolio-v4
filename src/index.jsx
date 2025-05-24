@@ -26,3 +26,4 @@ export const Root = () => {
 
 // Render the Root component
 ReactDOM.createRoot(document.getElementById('root')).render(<Root />)
+
