@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Box, Drawer, List, ListItem, ListItemIcon, ListItemText, AppBar, Toolbar, Typography, IconButton, Avatar, Button, Grid, Paper, useTheme, Tooltip, Divider } from '@mui/material';
-import { Menu as MenuIcon, Dashboard as DashboardIcon, Work as WorkIcon, Mail as MailIcon, Logout as LogoutIcon, Code as CodeIcon, Palette as PaletteIcon, Add as AddIcon, Brightness4, Brightness7, Person as PersonIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, Dashboard as DashboardIcon, Work as WorkIcon, Mail as MailIcon, Logout as LogoutIcon, Code as CodeIcon, Palette as PaletteIcon, Add as AddIcon, Brightness4, Brightness7, Person as PersonIcon, Share as ShareIcon } from '@mui/icons-material';
 import { useNavigate, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ProjectManager from './ProjectManager';
@@ -8,6 +8,7 @@ import MessageManager from './MessageManager';
 import DashboardHome from './DashboardHome';
 import SkillManager from './SkillManager';
 import ThemeManager from './ThemeManager';
+import SocialMediaManager from './SocialMediaManager';
 
 const Dashboard = ({ setIsAuthenticated }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,6 +56,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     { text: 'Projeler', icon: <WorkIcon />, path: '/admin/projects' },
     { text: 'Yetenekler', icon: <CodeIcon />, path: '/admin/skills' },
     { text: 'Mesajlar', icon: <MailIcon />, path: '/admin/messages' },
+    { text: 'Sosyal Medya', icon: <ShareIcon />, path: '/admin/social-media' },
     { text: 'Tema Ayarları', icon: <PaletteIcon />, path: '/admin/theme' },
   ];
 
@@ -263,10 +265,11 @@ const Dashboard = ({ setIsAuthenticated }) => {
       }}>
         <Routes>
           <Route path="/" element={<Navigate to="/admin/dashboard" />} />
-          <Route path="/dashboard" element={overviewContent} />
+          <Route path="/dashboard" element={<DashboardHome stats={stats} recentMessages={recentMessages} recentProjects={recentProjects} />} />
           <Route path="/projects" element={<ProjectManager />} />
           <Route path="/skills" element={<SkillManager />} />
           <Route path="/messages" element={<MessageManager />} />
+          <Route path="/social-media" element={<SocialMediaManager />} />
           <Route path="/theme" element={<ThemeManager />} />
           <Route path="*" element={<Navigate to="/admin/dashboard" />} />
         </Routes>

@@ -8,6 +8,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
+import socialMediaRoutes from './routes/socialMediaRoutes.js';
 
 // Create require function for ES modules
 const require = createRequire(import.meta.url);
@@ -37,6 +38,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/social-media', socialMediaRoutes);
 
 const PORT = process.env.PORT || 5000;
 

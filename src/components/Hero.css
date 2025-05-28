@@ -3,7 +3,8 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 1rem; /* Reduced gap between content and image */
   padding: 0 var(--desktop-padding);
   position: relative;
   overflow: hidden;
@@ -40,13 +41,61 @@
   }
 }
 
-.hero-bg-animation {
+/* CSS Animation Sphere */
+.animated-sphere {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #8a2be2, #4169e1);
+  position: relative;
+  margin-bottom: 30px;
+  animation: pulse-sphere 4s ease-in-out infinite alternate;
+  box-shadow: 0 0 30px rgba(138, 43, 226, 0.5);
+}
+
+.animated-sphere::before {
+  content: '';
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  filter: blur(5px);
+}
+
+.animated-sphere::after {
+  content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  filter: blur(2px);
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+  animation: rotate-sphere 8s linear infinite;
+}
+
+@keyframes pulse-sphere {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(138, 43, 226, 0.7);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+  }
+}
+
+@keyframes rotate-sphere {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .hero-content {
@@ -54,6 +103,10 @@
   max-width: 600px;
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
 }
 
 .hero-title {
@@ -171,6 +224,7 @@
   transform: translateX(-100%);
   transition: transform 0.6s ease;
   z-index: -1;
+  background: radial-gradient(circle at center, rgba(75, 0, 130, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
 }
 
 .cta-btn:hover::before {
@@ -196,6 +250,12 @@
   max-width: 450px;
   position: relative;
   z-index: 1;
+}
+
+.profile-container {
+  position: relative;
+  z-index: 1;
+  margin-left: 0;
 }
 
 .image-container {

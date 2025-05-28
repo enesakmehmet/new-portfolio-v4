@@ -12,6 +12,7 @@ const Hero = lazy(() => import('./components/Hero'))
 const About = lazy(() => import('./components/About'))
 const Skills = lazy(() => import('./components/Skills'))
 const Projects = lazy(() => import('./components/Projects'))
+const SocialMediaFeed = lazy(() => import('./components/SocialMediaFeed'))
 const Contact = lazy(() => import('./components/Contact'))
 const ProjectDetails = lazy(() => import('./components/ProjectDetails'))
 const AdminLogin = lazy(() => import('./components/admin/AdminLogin'))
@@ -42,6 +43,7 @@ function App() {
                   <About />
                   <Skills />
                   <Projects />
+                  <SocialMediaFeed />
                   <Contact />
                 </>
               } />
