@@ -91,7 +91,6 @@ const SocialMediaFeed = () => {
     return (
       <div className="social-media-feed-container">
         <h2 className="section-title">Sosyal Medya</h2>
-        <div className="error-message">{error}</div>
         
         {/* Direct Social Media Links */}
         <div className="direct-social-links">
