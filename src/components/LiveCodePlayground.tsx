@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './LiveCodePlayground.css';
 
 const defaultHTML = `<!-- HTML -->\n<h2>Merhaba Dünya!</h2>`;
@@ -16,6 +16,11 @@ const LiveCodePlayground: React.FC = () => {
     const doc = `\n      <html>\n        <head>\n          <style>${css}</style>\n        </head>\n        <body>\n          ${html}\n          <script>${js}<\/script>\n        </body>\n      </html>\n    `;
     setSrcDoc(doc);
   };
+
+  // Sayfa yüklendiğinde otomatik olarak kodu çalıştır
+  useEffect(() => {
+    runCode();
+  }, []);
 
   return (
     <div className="live-playground-container">
