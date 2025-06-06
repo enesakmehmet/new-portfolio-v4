@@ -25,6 +25,7 @@ const Navbar: React.FC = () => {
           <Link to="/" className={`nav-link${location.pathname === '/' ? ' active' : ''}`}>Anasayfa</Link>
           <Link to="/about" className={`nav-link${location.pathname === '/about' ? ' active' : ''}`}>Hakkımda</Link>
           <Link to="/projects" className={`nav-link${location.pathname.startsWith('/projects') ? ' active' : ''}`}>Projeler</Link>
+          <Link to="/playground" className={`nav-link${location.pathname === '/playground' ? ' active' : ''}`}>Playground</Link>
           <Link to="/skills" className={`nav-link${location.pathname === '/skills' ? ' active' : ''}`}>Yetenekler</Link>
           <Link to="/contact" className={`nav-link${location.pathname === '/contact' ? ' active' : ''}`}>İletişim</Link>
           <Link to="/admin" className="admin-button gradient-btn">Admin</Link>

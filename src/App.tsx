@@ -35,6 +35,8 @@ const AdminLogin = lazyWithRetry(() => import('./components/admin/AdminLogin'));
 const Dashboard = lazyWithRetry(() => import('./components/admin/Dashboard'));
 // Lazy load ParticleCanvas to improve initial load
 const ParticleCanvas = lazyWithRetry(() => import('./components/animations/ParticleCanvas'));
+// Lazy load LiveCodePlayground
+const LiveCodePlayground = lazyWithRetry(() => import('./components/LiveCodePlayground'));
 
 // Preload main route components after initial load - route bazlı preloading
 const preloadMainComponents = () => {
@@ -51,7 +53,8 @@ const preloadMainComponents = () => {
   const componentsToPreload = [
     () => import('./components/About'),
     () => import('./components/Skills'),
-    () => import('./components/Projects')
+    () => import('./components/Projects'),
+    () => import('./components/LiveCodePlayground')
   ];
 
   componentsToPreload.forEach(preloadWithIdle);
@@ -89,7 +92,11 @@ const AnimatedRoutes = ({ isAuthenticated, setIsAuthenticated }: { isAuthenticat
         <Route path="/projects/:id" element={<ProjectDetails />} />
         <Route path="/skills" element={<Skills />} />
         <Route path="/contact" element={<Contact />} />
-        
+        <Route path="/playground" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <LiveCodePlayground />
+          </Suspense>
+        } />
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLogin setIsAuthenticated={setIsAuthenticated} />} />
         <Route path="/admin/*" element={
