@@ -131,13 +131,6 @@ Projenizde GIF ve video kullanımını test etmek için:
   mediaSrc: "/gifs/examples/example.gif"
 }
 
-// Örnek video kullanımı
-{
-  mediaType: "video",
-  mediaSrc: "/videos/examples/example.mp4"
-}
-```
-///////////////////
-/////////////////7
+
 
 
